@@ -1,18 +1,22 @@
 {
-    "builds": [   {
-      "src": "static/**",
-      "use": "@vercel/static",
-    },
-    {
-        "src": "dpps/wsgi.py",
-        "use": "@ardnt/vercel-python-wsgi",
-        "config": { "maxLambdaSize": "30mb" }
-    }],
+    "builds": [
+        {
+            "src": "static/*",
+            "use": "@vercel/static"
+        },
+        {
+            "src": "dpps/wsgi.py",
+            "use": "@ardnt/vercel-python-wsgi",
+            "config": {
+                "maxLambdaSize": "30mb"
+            }
+        }
+    ],
     "routes": [
-            {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
+        {
+            "src": "/static/(.*)",
+            "dest": "/static/$1"
+        },
         {
             "src": "/(.*)",
             "dest": "dpps/wsgi.py"
