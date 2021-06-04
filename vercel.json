@@ -1,6 +1,6 @@
 {
     "builds": [   {
-      "src": "static/**,
+      "src": "static/**",
       "use": "@vercel/static",
     },
     {
