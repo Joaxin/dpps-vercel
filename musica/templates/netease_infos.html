@@ -1,0 +1,92 @@
+{% extends 'musica_base.html' %}
+{% load static %}
+{% block css %} <link href="{% static 'musica/music_infos.css' %}" rel="stylesheet" type="text/css" /> {% endblock css %}
+{% block body %}
+<section class="section is-clearfix" id="Tabs">
+    <div class="container">
+        <div class="content">
+
+            <div id="Tabs">
+                <!-- Nav tabs -->
+                <input type="radio" id="TabA" name="nav-tab" checked>
+                <input type="radio" id="TabB" name="nav-tab">
+                <input type="radio" id="TabC" name="nav-tab">
+                <input type="radio" id="TabD" name="nav-tab">
+                <div class="tabs is-large">
+                    <ul>
+                        <li class="tab-A">
+                            <label for="TabA"> <a>
+                                    <span class="icon is-small"><i class="fas fa-image" aria-hidden="true"></i></span>
+                                    <span>Song</span>
+                                </a></label>
+                        </li>
+                        <li class="tab-B">
+                            <label for="TabB"> <a>
+                                    <span class="icon is-small"><i class="fas fa-music" aria-hidden="true"></i></span>
+                                    <span>Music</span>
+                                </a></label>
+
+                        </li>
+                        <li class="tab-C">
+                            <label for="TabC"> <a>
+                                    <span class="icon is-small"><i class="fas fa-film" aria-hidden="true"></i></span>
+                                    <span>Videos</span>
+                                </a></label>
+                        </li>
+                        <li class="tab-D">
+                            <label for="TabD"> <a>
+                                    <span class="icon is-small"><i class="far fa-file-alt" aria-hidden="true"></i></span>
+                                    <span>Documents</span>
+                                </a></label>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane content-A">
+<div class="card">
+  <div class="card-image">
+                            <img src="{{song_infos.song_pic}}" alt="{{song_infos.song_title}}" style="width:250px;height:250px" />
+  </div>
+  <div class="card-content">
+    <div class="media">
+      <div class="media-left">
+          <img src="{{song_infos.song_pic}}" alt="Placeholder image" style="width:96px;height:96px">
+      </div>
+      <div class="media-content">
+        <p class="title is-4">{{song_infos.title}}</p>
+        <p class="subtitle is-6">@<a target="_blank" href="{{song_infos.song_url}}">{{song_infos.artists}}</a></p>
+      </div>
+    </div>
+
+    <div class="content">
+           <div>{{song_infos.song_title}} <br>
+            所属专辑: <a target="_blank" href="{{song_infos.song_album_url}}">{{song_infos.song_album}}</a></div>
+      <br>
+      <time datetime="2016-1-1">发行时间: 1 Jan 2016</time>
+    </div>
+  </div>
+</div>
+                      
+                           
+                      
+                    </div>
+                    <div class="tab-pane content-B"> <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id={{song_infos.song_id}}&auto=1&height=66"></iframe></div>
+                    <div class="tab-pane content-C">
+                        <meting-js server="netease" type="song" id="{{song_infos.song_id}}">
+                        </meting-js>
+
+                       
+                    </div>
+                    <div class="tab-pane content-D">
+                        <a href="{{song_infos.song_mp3}}">下载MP3</a>
+                        <meting-js auto="{{song_infos.song_url}}"> </meting-js>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock body %}

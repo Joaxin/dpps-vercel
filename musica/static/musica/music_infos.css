@@ -1,0 +1,45 @@
+body {
+  background: #efefef;
+  height: 100%;
+}
+
+#Tabs .content .tabs ul {
+  margin-left: 0 !important;
+}
+#Tabs .tabs ul li a {
+  border-radius: 10px 10px 0 0;
+  border-color: #dbdbdb;
+}
+#Tabs input[type=radio],
+#Tabs .tab-pane {
+  display: none;
+}
+#Tabs #TabA:checked ~ .tabs > ul li.tab-A a,
+#Tabs #TabB:checked ~ .tabs > ul li.tab-B a,
+#Tabs #TabC:checked ~ .tabs > ul li.tab-C a,
+#Tabs #TabD:checked ~ .tabs > ul li.tab-D a {
+  background-color: #fff;
+  border-color: #dbdbdb;
+  border-bottom-color: transparent !important;
+}
+#Tabs #TabA:checked ~ .tab-content > .content-A,
+#Tabs #TabB:checked ~ .tab-content > .content-B,
+#Tabs #TabC:checked ~ .tab-content > .content-C,
+#Tabs #TabD:checked ~ .tab-content > .content-D {
+  display: block;
+}
+#Tabs .tabs {
+  margin-bottom: 0 !important;
+}
+#Tabs .tab-content {
+  background: #FFF;
+  padding: 1.5em;
+}
+
+.card>.card-image{
+  float: left;
+}
+.card>.card-content{
+    padding-top: 20px;
+    padding-left: 300px;
+}
