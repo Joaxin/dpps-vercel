@@ -1,17 +1,27 @@
 {% extends 'musica_base.html' %}
 {% block body %}
-<div class="columns is-mobile">
+<div class="columns">
 
   <div class="column is-half is-offset-one-quarter">
-  	<h2 >网易云音乐</h2>
-  	<form action="song">
-<div class="field is-grouped">
-      <input class="input" type="text" placeholder="Find Your Favourite Music ID (e.g. 29103531)" name = "sid" value="29103531">
-      <button type="submit" class="button is-info">
-        Search
-      </button>
-  </div>
-</form>
+  	<form action="netease">
+  	  <section class="hero">
+        <div class="hero-body">
+          <p class="title pb-5">
+            网易云音乐歌曲信息工具
+          </p>
+          <p class="subtitle">
+            <div class="field is-grouped">
+              <label for="sid">网易云音乐歌曲ID或者网址(e.g. 38574767)</label>
+              <input class="input" type="text" placeholder="38574767" name = "sid" value="">
+              <button type="submit" class="button is-info">
+                Search
+              </button>
+          </div>
+        </form>
+          </p>
+        </div>
+      </section>
+
   </div>
 </div>
 

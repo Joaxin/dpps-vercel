@@ -48,8 +48,6 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR/"staticfiles"
 ```
 
-The builder allows us to run a custom bash script and deploy any files populated in a subdirectory of the build. This allows us to run `python manage.py collectstatic` in every build instead of having to run it before each deploy.
-
 ### Configure the project for Vercel
 
 There are three chores to take care of before you’re ready for deployment: adding a Vercel configuration, fixing some settings, and listing our dependencies.
@@ -58,12 +56,24 @@ First, add a Vercel configuration file, `vercel.json`, to the root of your proje
 
 ```json
 {
-    "builds": [{
-        "src": "dpps/wsgi.py",
-        "use": "@ardnt/vercel-python-wsgi",
-        "config": { "maxLambdaSize": "15mb" }
-    }],
+    "builds": [
+        {
+            "src": "static/**",
+            "use": "@vercel/static"
+        },
+        {
+            "src": "dpps/wsgi.py",
+            "use": "@ardnt/vercel-python-wsgi",
+            "config": {
+                "maxLambdaSize": "30mb"
+            }
+        }
+    ],
     "routes": [
+        {
+            "src": "/static/(.*)",
+            "dest": "/static/$1"
+        },
         {
             "src": "/(.*)",
             "dest": "dpps/wsgi.py"
