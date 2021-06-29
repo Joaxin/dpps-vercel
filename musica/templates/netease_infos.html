@@ -80,6 +80,9 @@
                         <div class="tab-pane content-B"> <iframe frameborder="no" border="0" marginwidth="0"
                                 marginheight="0" width="100%" height="86"
                                 src="//music.163.com/outchain/player?type=2&id={{song_infos.song_id}}&auto=1&height=66"></iframe>
+                                <button class="btn button is-info" data-clipboard-text="{{song_infos.song_title}} {{song_infos.song_url}} {N{{song_infos.song_id}}}">
+                                    复制歌曲信息
+                                </button>
                         </div>
                         <div class="tab-pane content-C">
                             <meting-js server="netease" type="song" id="{{song_infos.song_id}}">
@@ -121,6 +124,6 @@
         bg.style.backgroundPosition = "center";
     }
     bg_overlay("{{song_infos.song_album_pic}}")
-    
+    let clipboard = new ClipboardJS('.btn');  
 </script>
 {% endblock js %}

@@ -17,9 +17,142 @@
     {% block css %} {% endblock css %}
   </head>
 <body>
+  
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">
+        <img src="{% static 'favicon.ico' %}" width="50" height="50">
+      </a>
+  
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+  
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item">
+          Home
+        </a>
+  
+        <a class="navbar-item">
+          Documentation
+        </a>
+  
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">
+            网易云
+          </a>
+  
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="{% url 'home' %}">
+              歌曲信息
+            </a>
+            <a class="navbar-item">
+              专辑信息
+            </a>
+            <a class="navbar-item">
+              歌手信息
+            </a>
+            <hr class="navbar-divider">
+            <a class="navbar-item">
+              About
+            </a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            Menu 2
+          </a>
+          <div class="navbar-dropdown is-hidden-mobile is-boxed">
+            <a class="navbar-item" href="{% url 'music_url_tools' %}">
+              歌曲链接信息
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 2
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 3
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 4
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 5
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 6
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 7
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 8
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 9
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 10
+            </a>
+          </div>
+        </div>
+      </div>
+  
+      <div class="navbar-end">
+        <div class="navbar-item">
+        
+          <div class="buttons">
+            <a class="button is-primary">
+              <strong>Sign up</strong>
+            </a>
+            <a class="button is-light">
+              Log in
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
 {% block body %}
 {% endblock body%}
 </body>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+// Get all "navbar-burger" elements
+var $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+// Check if there are any navbar burgers
+if ($navbarBurgers.length > 0) {
+
+  // Add a click event on each of them
+  $navbarBurgers.forEach(function ($el) {
+    $el.addEventListener('click', function () {
+
+      // Get the target from the "data-target" attribute
+      var target = $el.dataset.target;
+      var $target = document.getElementById(target);
+
+      // Toggle the class on both the "navbar-burger" and the "navbar-menu"
+      $el.classList.toggle('is-active');
+      $target.classList.toggle('is-active');
+
+    });
+  });
+}
+
+});
+
+document.querySelectorAll('.navbar-link').forEach(function(navbarLink){
+navbarLink.addEventListener('click', function(){
+  navbarLink.nextElementSibling.classList.toggle('is-hidden-mobile');
+})
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
 {% block js %}
 {% endblock js %}
 </html>

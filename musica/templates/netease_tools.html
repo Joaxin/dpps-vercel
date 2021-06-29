@@ -1,0 +1,41 @@
+{% extends 'musica_base.html' %}
+{% load static %}
+{% block body %}
+<div class="columns is-mobile is-centered mt-5">
+    <div class="field is-half column">
+        <label class="label">网易云歌曲链接</label>
+        <div class="control">
+            <input class="input" type="text" placeholder="Netease URL" id="nurl">
+        </div>
+        <p class="help">e.g. http://music.163.com/song?id=16323601 </p>
+        <button class="button is-link mt-2" onclick="get_netease_id()">确认</button>
+        <hr>
+        <input id="netease_id" class="input" type="text" value=""  style="width: 100px;"  />
+        <button class="btn button is-info" data-clipboard-action="copy" data-clipboard-target="#netease_id">
+            Copy
+        </button>
+    </div>
+</div>
+
+{% endblock body%}
+{% block js %}
+<script>
+    function get_netease_id(){
+    let re = /.*https?:\/\/(y\.)?music\.163\.com\/(#\/|m\/)?(song\?id=|song\/)(\d+)(&|\?|\/\?)?(userid=\d+)?.*/sm;
+    
+    let url = document.getElementById("nurl").value
+    let netease_id = url.replace(re, "$4");
+    document.getElementById("netease_id").value = netease_id;
+    if (url.replace(re, "$6")){
+        // ?userid=XXXXX or &userid=XXXXX
+        userid = url.replace(re, "$6")
+        netease_user_url = "https://music.163.com/#/user/home?id=" + userid.match(/\d/g).join("");
+        document.querySelector(".help").innerHTML = `<a href = "${netease_user_url}" target="_blank">${netease_user_url}</a>`
+    }
+    console.log(netease_id);
+    }
+</script>
+<script>
+    let clipboard = new ClipboardJS('.btn');
+</script>
+{% endblock js %}
