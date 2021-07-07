@@ -18,8 +18,8 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 
 urlpatterns = [
-    path('mu/', include('musica.urls')),
+    path('', include('musica.urls')),
     path('u/', include('utilities.urls')),
-    path('',RedirectView.as_view(url='/mu/', permanent=True)),
+    path('',RedirectView.as_view(url='/s/', permanent=True)),
     
 ]

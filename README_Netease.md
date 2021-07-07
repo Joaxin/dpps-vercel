@@ -19,12 +19,15 @@ auto: 0为非自动播放，1为自动播放
 
 PC客户端: 
 
-Andrea Bocelli/Sarah Brightman - Time To Say Goodbye (Con Te Partirò)
+以歌曲Andrea Bocelli/Sarah Brightman - Time To Say Goodbye (Con Te Partirò)和专辑阿南亮子- Eternal Light为例：
 
 ```
 http://music.163.com/song?id=16323601&userid=XXXXXX
 http://music.163.com/song?id=16323601
 https://music.163.com/#/song?id=16323601
+
+https://music.163.com/#/album?id=2084576
+https://music.163.com/#/album?id=2084576
 ```
 
 移动端
@@ -53,7 +56,3 @@ https://music.163.com/#/share/sina/direct/18/16323601?userid=XXXXXX&haspic=0
 ```
 https://music.163.com/#/user/home?id=XXXXXX
 ```
-
-## API测试
-
-http://music.163.com/song?id=427142070

@@ -1,18 +1,22 @@
 from django.shortcuts import render
-from .scripts.neteaseMusicAPI import song_infos
+from .scripts.neteaseMusicAPI import song_infos,album_infos
 from django.http import HttpResponse
 from datetime import datetime
 # Create your views here.
 import re
 
 
-def home(request):
-    return render(request, 'netease_id.html')
+def netease_song(request):
+    return render(request, 'netease_id_song.html')
+
+def netease_album(request):
+    return render(request, 'netease_id_album.html')
+
 
 def music_url_tools(request):
     return render(request, 'netease_tools.html')
 
-def netease_infos(request):
+def netease_infos_song(request):
     sid = request.GET['sid']
     print(sid)
     now = datetime.now()
@@ -35,15 +39,49 @@ def netease_infos(request):
 	    '''
         return HttpResponse(html)
 
-    netease_song_infos = song_infos(sid)
-    if netease_song_infos:
-        return render(request, 'netease_infos.html', {'song_infos': netease_song_infos})
+    netease_infos_song = song_infos(sid)
+    if netease_infos_song:
+        return render(request, 'netease_infos_song.html', {'song_infos': netease_infos_song})
     else:
         now = datetime.now()
         html = f'''
 	    <html>
 	        <body>
 	            <h1>无效的歌曲ID! 请访问<a href="http://music.163.com/song?id={sid}" target="_blank">http://music.163.com/song?id={sid}</a></h1>
+	            <p>The current time is { now }.</p>
+	        </body>
+	    </html>
+	    '''
+        return HttpResponse(html)
+
+def netease_infos_album(request):
+    aid = request.GET['aid']
+    print(aid)
+    now = datetime.now()
+    pattern = re.compile('.*https?:\/\/(y\.)?music\.163\.com\/(#\/|m\/)?(album\?id=|album\/)(\d+)(&|\?|\/\?)?(userid=\d+)?.*', re.S)
+    if re.search("^(\d+)$", aid):
+        aid = re.search("^(\d+)$", aid).group(1)
+    elif re.search(pattern, aid):
+        aid = re.search(pattern, aid).group(4)
+    else:
+        html = f'''
+	    <html>
+	        <body>
+	            <h1>非法的URL或ID！</h1>
+	        </body>
+	    </html>
+	    '''
+        return HttpResponse(html)
+
+    netease_infos_album_ = album_infos(aid)
+    if netease_infos_album:
+        return render(request, 'netease_infos_album.html', {'album_infos': netease_infos_album_})
+    else:
+        now = datetime.now()
+        html = f'''
+	    <html>
+	        <body>
+	            <h1>无效的专辑ID! 请访问<a href="http://music.163.com/album?id={aid}" target="_blank">http://music.163.com/album?id={aid}</a></h1>
 	            <p>The current time is { now }.</p>
 	        </body>
 	    </html>

@@ -1,13 +1,25 @@
 from pyncm import apis
 from pyncm import utils
 import time
+import re
 
 ## Pyncm From https://github.com/kitUIN/pyncm
 ## API https://github.com/greats3an/pyncm/wiki
+
 def song_infos(song_id):
     sg_infos = {}
     try:
         song_infos = apis.track.GetTrackDetail(song_id)
+        artists = {"name":[],"aname":[],"url":[]}
+        for ar in song_infos['songs'][0]['ar']:
+            artists["name"].append(ar["name"])
+            an = ar.get("alias","")
+            if isinstance(an, list):
+                an = ",".join(an)
+            artists["aname"].append(an)  ## 艺术家别名
+            ## https://music.163.com/#/artist?id=17309 艺术家URL
+            artists["url"].append("https://music.163.com/artist?id=" + str(ar.get("id","")))
+        artists2 = list(zip(*[artists[key] for key in artists]))
         artists = []
         artists_id = []
         for ar in song_infos['songs'][0]['ar']:
@@ -17,9 +29,11 @@ def song_infos(song_id):
         artists = "/".join(artists)
         title = song_infos['songs'][0]['name']
         sg_infos["artists"] = artists
+        sg_infos["artists2"] = artists2
         sg_infos["title"] = title
         sg_infos["song_id"] = song_id
         sg_infos["song_title"] = artists +" - "+ title ## 歌曲信息
+        sg_infos["song_title_"] = re.sub(r"[\(\[（].*?[\)\]）]", "", sg_infos["song_title"]) ## 歌曲信息去括号
         sg_infos["song_album_id"] =  str(song_infos['songs'][0]['al']["id"])  # 专辑ID
         
         album_infos = apis.album.GetAlbumInfo(sg_infos["song_album_id"])
@@ -76,36 +90,55 @@ def playlist_infos(playlist_id):
         pl_infos["songs"][i] = sg_infos
     return(pl_infos)
 
+
 def album_infos(album_id):
     album_infos = apis.album.GetAlbumInfo(album_id)
     al_infos = {}
     al_infos["album"]={}
-    al_infos["album"]["album_url"] = "http://music.163.com/album?id=" + str(album_infos['songs'][0]["al"]["id"])
-    al_infos["album"]["album_name"] = album_infos['album']["name"]
-    al_infos["album"]["album_picUrl"] = album_infos['album']['picUrl']
-    al_infos["album"]["album_publishTime"] = time.strftime("%Y-%m-%d",time.localtime(album_infos['album']['publishTime']/1000))
-    al_infos["album"]["album_company"] = album_infos['album']['company']
-    al_infos["album"]["album_artists"] = album_infos['album']['artist']['name']
-    al_infos["album"]["album_artists_img"] = album_infos['album']['artist']['picUrl']
+    al_infos["album"]["album_url"] = "http://music.163.com/album?id=" + str(album_infos['songs'][0]["al"]["id"]) ## 专辑URL
+    al_infos["album"]["album_name"] = album_infos['album']["name"]  ## 专辑名称
+    al_infos["album"]["album_picUrl"] = album_infos['album']['picUrl']   ## 专辑图片
+    al_infos["album"]["album_publishTime"] = time.strftime("%Y-%m-%d",time.localtime(album_infos['album']['publishTime']/1000)) ## 专辑发行时间
+    al_infos["album"]["album_description"] = album_infos['album']["description"]  ## 专辑简介
+    al_infos["album"]["album_subType"] = album_infos['album']['subType']  ## 专辑介质
+    al_infos["album"]["album_company"] = album_infos['album']['company']  ## 发行公司
+    artist_name = album_infos['album']['artist']['name'] ## 艺术家
+    al_infos["album"]["album_artists"] = artist_name
+    al_infos["album"]["album_artists_i"] = artist_name + ",".join(album_infos['album']['artist'].get('alias',""))  ## 艺术家
+    al_infos["album"]["album_artists_img"] = album_infos['album']['artist']['picUrl']  ## 艺术家图片
+    al_infos["album"]["album_artists_id"] = album_infos['album']['artist']['id']  ## 艺术家ID
+    al_infos["album"]["album_paid"] = album_infos['album']['paid'] ## 是否为付费专辑
     al_infos["songs"] = {}
     for i,pl in enumerate(album_infos["songs"]):
-        artists = []
+        artists = {"name":[],"aname":[],"url":[]}
         for ar in pl['ar']:
-            artists.append(ar["name"])
-        artists = "/".join(artists)
+            artists["name"].append(ar["name"])
+            an = ar.get("alia","")
+            if isinstance(an, list):
+                an = ",".join(an)
+            artists["aname"].append(an)  ## 艺术家别名
+            ## https://music.163.com/#/artist?id=17309 艺术家URL
+            artists["url"].append("https://music.163.com/artist?id=" + str(ar.get("id","")))
+        artists2 = list(zip(*[artists[key] for key in artists]))
+        ## [('阿南亮子', 'Anan Ryoko', 'https://music.163.com/artist?id=16069'),('Nicky Guiland', '', 'https://music.163.com/artist?id=234474')]
+        # e.g. {'name': ['阿南亮子', 'Nicky Guiland'], 'aname': ['Anan Ryoko', ''], 'url': ['https://music.163.com/artist?id=16069', 'https://music.163.com/artist?id=234474']}
+        artists_name = "/".join(artists["name"])
         title = pl['name']
         sg_infos = {}
         sg_infos["artists"] = artists
+        sg_infos["artists2"] = artists2
+        sg_infos["artists_name"] = artists_name
         sg_infos["title"] = title
-        sg_infos["歌曲信息"] = artists + " - "+title
-        sg_infos["歌曲ID"] =  pl["id"] 
-        sg_infos["歌曲专辑"] =  pl['al']["name"] 
-        sg_infos["歌曲图片"] =  pl['al']["picUrl"] 
-        sg_infos["歌曲URL"] = "http://music.163.com/song?id=" + str(pl["id"])
-        sg_infos["歌曲MP3"] = "http://music.163.com/song/media/outer/url?id=" + str(pl["id"])  + ".mp3"
+        sg_infos["song_title"] = artists_name + " - "+title  ## 歌曲信息
+        sg_infos["song_id"] =  pl["id"]  ## 歌曲ID
+        sg_infos["song_album"] =  pl['al']["name"]  ## 专歌曲辑名称
+        sg_infos["song_album_tns"] =  ",".join(pl['al'].get("tns",""))  ## 歌曲专辑翻译
+        sg_infos["song_album_pic"] =  pl['al']["picUrl"]  ## 歌曲专辑图片
+        sg_infos["song_url"] = "http://music.163.com/song?id=" + str(pl["id"])  ## 歌曲URL
+        sg_infos["song_mp3"] = "http://music.163.com/song/media/outer/url?id=" + str(pl["id"])  + ".mp3"   ## 歌曲MP3
         al_infos["songs"][i] = sg_infos
+        al_infos["songs"][i]["idx"] = i + 1
     return(al_infos)
 
 if __name__ == '__main__':
-    ID = ''
-    album_douban_crawl(ID)
+    pass

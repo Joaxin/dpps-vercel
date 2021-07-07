@@ -1,0 +1,24 @@
+{% extends 'musica_base.html' %}
+{% block body %}
+<div class="columns">
+
+  <div class="column is-8 is-offset-2">
+    <p class="title pt-5">
+      网易云音乐歌曲信息工具
+    </p>
+    <form action="netease">
+          
+          <div class="box">
+            <label for="sid" class="subtitle">网易云音乐歌曲ID或者网址(e.g. 38574767,1332702669)</label>
+            <input class="input" type="text" placeholder="38574767" name="sid" value="">
+            <button type="submit" class="button is-info mt-2">
+              Search
+            </button>
+        
+
+        </div>
+      </form>
+  </div>
+</div>
+
+{% endblock %}

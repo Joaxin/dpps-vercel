@@ -34,29 +34,30 @@
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
         <a class="navbar-item">
-          Home
+          
         </a>
-  
-        <a class="navbar-item">
-          Documentation
-        </a>
-  
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link">
             网易云
           </a>
   
           <div class="navbar-dropdown">
-            <a class="navbar-item" href="{% url 'home' %}">
+            <a class="navbar-item" href="{% url 'netease_song' %}">
               歌曲信息
             </a>
-            <a class="navbar-item">
+            <a class="navbar-item" href="{% url 'netease_album' %}">
               专辑信息
+            </a>
+            <a class="navbar-item">
+              歌单信息
             </a>
             <a class="navbar-item">
               歌手信息
             </a>
             <hr class="navbar-divider">
+            <a class="navbar-item" href="{% url 'music_url_tools' %}">
+              歌曲链接信息
+            </a>
             <a class="navbar-item">
               About
             </a>
@@ -64,12 +65,45 @@
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link" href="#">
-            Menu 2
+            歌曲推荐
           </a>
           <div class="navbar-dropdown is-hidden-mobile is-boxed">
-            <a class="navbar-item" href="{% url 'music_url_tools' %}">
-              歌曲链接信息
+
+            <a class="navbar-item" href="#">
+              Submenu 2
             </a>
+            <a class="navbar-item" href="#">
+              Submenu 3
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 4
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 5
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 6
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 7
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 8
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 9
+            </a>
+            <a class="navbar-item" href="#">
+              Submenu 10
+            </a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">
+            情境
+          </a>
+          <div class="navbar-dropdown is-hidden-mobile is-boxed">
+
             <a class="navbar-item" href="#">
               Submenu 2
             </a>
