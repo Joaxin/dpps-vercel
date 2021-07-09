@@ -1,0 +1,272 @@
+{% extends 'musica_base.html' %}
+{% load static %}
+{% block css %}
+<link href="{% static 'musica/music_infos.css' %}" rel="stylesheet" type="text/css" /> 
+<style>
+    table+ul>li {
+        display: inline-block;
+        font-weight: bold;
+        margin: 5px;
+    }
+</style>
+{% endblock css %}
+{% block body %}
+<div id="overlay"></div>
+<section class="section is-clearfix" id="Tabs">
+    <div class="container">
+        <div class="content">
+            <div>
+                <!-- Nav tabs -->
+                <input type="radio" id="TabA" name="nav-tab" checked>
+                <input type="radio" id="TabB" name="nav-tab">
+                <input type="radio" id="TabC" name="nav-tab">
+                <input type="radio" id="TabD" name="nav-tab">
+                <div class="tabs is-large">
+                    <ul>
+                        <li class="tab-A">
+                            <label for="TabA"> <a>
+                                    <span class="icon is-small"><i class="fas fa-image" aria-hidden="true"></i></span>
+                                    <span>Playlist</span>
+                                </a></label>
+                        </li>
+                        <li class="tab-B">
+                            <label for="TabB"> <a>
+                                    <span class="icon is-small"><i class="fas fa-music" aria-hidden="true"></i></span>
+                                    <span>SongList</span>
+                                </a></label>
+
+                        </li>
+                        <li class="tab-C">
+                            <label for="TabC"> <a>
+                                    <span class="icon is-small"><i class="fas fa-film" aria-hidden="true"></i></span>
+                                    <span>Gallery</span>
+                                </a></label>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane content-A">
+                        <div class="card">
+                            <div class="card-content columns">
+                                <div class="column">
+                                    <div class="content columns is-multiline">
+
+                                        <img src="{{playlist_infos.playlist.playlist_creator_avatarUrl}}"
+                                            alt="{{playlist_infos.playlist.playlist_name}}"
+                                            style="border-radius:50%;height:80px;width:80px;">
+                                        <span class="subtitle mt-5 ml-2">@<a target="_blank"
+                                                href="https://music.163.com/#/user/home?id={{playlist_infos.playlist.playlist_creator_id}}">{{playlist_infos.playlist.playlist_creator}}</a></span>
+
+                                        <div class="column is-full-tablet is-10-widescreen is-full-fullhd">
+                                            <p class="title is-4 mt-4">{{playlist_infos.playlist.playlist_name}}</p>
+
+                                        </div>
+                                        <div class="column is-full-tablet">
+                                            <div>
+                                                {% if playlist_infos.alnum.playlist_company%}
+                                                发行: {{playlist_infos.alnum.playlist_company}} <br>
+                                                {% endif %}
+                                                专辑: <a target="_blank"
+                                                    href="{{playlist_infos.playlist.playlist_url}}">{{playlist_infos.playlist.playlist_name}}</a>
+                                            </div>
+                                            <br>
+                                            <time datetime="{{playlist_infos.playlist.playlist_createTime}}">创建时间:
+                                                {{playlist_infos.playlist.playlist_createTime}}</time><br>
+                                            <time datetime="{{playlist_infos.playlist.playlist_updateTime}}">更新时间:
+                                                {{playlist_infos.playlist.playlist_updateTime}}</time>
+                                            <hr>
+                                            <div class="description">{{playlist_infos.playlist.playlist_description}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-image column is-narrow">
+                                    <img src="{{playlist_infos.playlist.playlist_coverImgUrl}}"
+                                        alt="{{playlist_infos.playlist.playlist_name}}"
+                                        style="width:250px;height:250px" />
+                                    <p>播放数：{{playlist_infos.playlist.playlist_subscribedCount}}
+                                    收藏数：{{playlist_infos.playlist.playlist_playCount}}</p>
+                                    {% if playlist_infos.playlist.playlist_tags %}
+                                    <p>标签：
+                                    {% for tg in playlist_infos.playlist.playlist_tags  %}
+                                    <span class="tag is-link is-light">{{tg}}</span>
+                                    {% endfor %}
+
+                                    {% endif %}
+                                </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane content-B">
+
+                        <table id="playlist" class="table">
+                            <thead>
+                                <tr>
+                                    <th class="show_hide">序号</th>
+                                    <th class="show_hide">专辑图片</th>
+                                    <th class="show_hide">歌曲标题</th>
+                                    <th class="show_hide">标题详细</th>
+                                    <th class="show_hide">歌手</th>
+                                    <th class="show_hide">歌手详细</th>
+                                    <th class="show_hide">专辑</th>
+                                    <!-- <th>歌曲时长</th> -->
+                                    <th class="show_hide">链接</th>
+                                    <th class="show_hide">下载MP3</th>
+                                    <th class="show_hide">本站链接</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for s in playlist_infos.tracks.values %}
+                                <tr>
+                                    <td>{{ s.idx }}</td>
+                                    <td>
+                                        <figure class="image is-96x96">
+                                            <img src="{{ s.song_album_pic }}">
+                                        </figure>
+                                    </td>
+                                    <td class="song_title">{{ s.title }}</td>
+                                    <td class="song_title">{{ s.song_title }}</td>
+                                    <td>{{ s.artists_name }}</td>
+                                    <td>
+                                        {% if s.artists %}
+                                        {% for ar in s.artists2 %}
+                                        {% if ar.1 %}
+                                        <a target="_blank" href="{{ar.2}}" title="{{ar.0}}">{{ar.0}}({{ar.1}})</a>
+                                        {% else %}
+                                        <a target="_blank" href="{{ar.2}}" title="{{ar.0}}">{{ar.0}}</a>
+                                        {% endif %}
+                                        {% if not forloop.last %}
+                                        /
+                                        {% endif %}
+                                        {% endfor %}
+
+                                        {% endif %}
+
+                                    </td>
+                                    {% if s.song_album_tns %}
+                                    <td>{{ s.song_album }}({{song_album_tns}})</td>
+                                    {% else %}
+                                    <td>{{ s.song_album }}</td>
+                                    {% endif %}
+                                    <!-- <td>NA</td> -->
+           
+                                    <td>
+                                        <a target="_blank" href="{{s.song_url}}" title="{{s.song_title}}"
+                                            download="{{s.song_title}}.mp3">试听</a>
+                                    </td>
+                                    <td>
+                                        <a target="_blank" href="{{s.song_mp3}}" title="{{s.song_title}}"
+                                            download="{{s.song_title}}.mp3">下载MP3</a>
+
+                                    </td>
+                                    <td>
+                                        <a target="_blank" href="/s/netease/?sid={{s.song_id}}"
+                                            title="{{ s.song_title }}">本站链接</a>
+
+                                    </td>
+
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <ul>
+                            <li><span>显示/隐藏:</span></li>
+                            <li><label class="checkbox"><input type="checkbox" id="10"
+                                        onchange="hide_show_table(this.id);"> 序号</label></li>
+                            <li><label class="checkbox"><input type="checkbox" id="9"
+                                        onchange="hide_show_table(this.id);"> 专辑图片</label></li>
+                            <li><label class="checkbox"><input type="checkbox" id="8"
+                                        onchange="hide_show_table(this.id);"> 歌曲标题</label></li>
+                            <li><label class="checkbox"><input type="checkbox" checked id="7"
+                                        onchange="hide_show_table(this.id);"> 标题详细</label></li>
+                            <li><label class="checkbox"><input type="checkbox" id="6"
+                                        onchange="hide_show_table(this.id);"> 歌手</label></li>
+                            <li><label class="checkbox"><input type="checkbox" checked  id="5"
+                                        onchange="hide_show_table(this.id);"> 歌手详细</label></li>
+                            <li><label class="checkbox"><input type="checkbox" id="4"
+                                        onchange="hide_show_table(this.id);"> 专辑</label></li>
+                            <li><label class="checkbox"><input type="checkbox" checked  id="3"
+                                        onchange="hide_show_table(this.id);"> 链接</label></li>
+                            <li><label class="checkbox"><input type="checkbox" checked id="2"
+                                        onchange="hide_show_table(this.id);"> 下载MP3</label></li>
+                            <li><label class="checkbox"><input type="checkbox" checked  id="1"
+                                        onchange="hide_show_table(this.id);"> 本站链接</label></li>
+                        </ul>
+                    </div>
+                    <div class="tab-pane content-C">
+
+                        <div class="columns is-multiline is-mobile has-text-centered">
+                            {% for s in playlist_infos.tracks.values %}
+                                        <div class="column is-3-tablet is-6-mobile">
+                                            <img src="{{ s.song_album_pic }}"/>
+                                            <p class="is-size-6">{{ s.song_title }}</p>
+                                            <p class="is-size-5">{{ s.song_album }}</p>
+                                            
+                                        </div>
+                            {% endfor %}
+                            </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock body %}
+{% block js %}
+<script>
+    function bg_overlay(img_url) {
+        let bg = document.getElementById('overlay')
+        bg.style.backgroundImage = "url(" + img_url + ")";
+        bg.style.backgroundRepeat = "no-repeat";
+        bg.style.backgroundSize = "cover"
+        bg.style.backgroundPosition = "center";
+    }
+    bg_overlay("{{playlist_infos.playlist.playlist_creator_backgroundUrl}}");
+    new ClipboardJS(".btn", {
+        text: function (trigger) {
+            var s = trigger.getAttribute("data-clipboard-text");
+            console.log(s);
+            for (var i = 0; i < s.length; i++) {
+                // console.log(i, s[i], s[i].charCodeAt(0));
+            }
+            return s;
+        }
+    });
+</script>
+<script>
+    function hide_show_table(idx) {
+        let checkbox_val = document.getElementById(idx).checked;
+        // The nth-child selector also counts hidden elements
+        // select nth td
+        td_ = "td:nth-last-of-type(" + idx + ")";
+        // select nth th with class show_hide
+        th_ = "th.show_hide:nth-last-of-type(" + idx + ")";
+        console.log(td_, th_);
+
+        if (checkbox_val) {
+            let all_col = document.querySelectorAll(td_);
+            for (let i = 0; i < all_col.length; i++) {
+                all_col[i].style.display = "none";
+            }
+            document.querySelector(th_).style.display = "none";
+        }
+
+        else {
+            let all_col = document.querySelectorAll(td_);
+            for (let i = 0; i < all_col.length; i++) {
+                all_col[i].style.display = "table-cell";
+            }
+            document.querySelector(th_).style.display = "table-cell";
+        }
+    }
+    hide_show_table(7);
+    hide_show_table(5);
+    hide_show_table(3);
+    hide_show_table(2);
+    hide_show_table(1);
+    </script>
+{% endblock js %}

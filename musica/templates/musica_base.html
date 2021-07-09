@@ -48,7 +48,7 @@
             <a class="navbar-item" href="{% url 'netease_album' %}">
               专辑信息
             </a>
-            <a class="navbar-item">
+            <a class="navbar-item" href="{% url 'netease_playlist' %}">
               歌单信息
             </a>
             <a class="navbar-item">
@@ -139,10 +139,10 @@
         <div class="navbar-item">
         
           <div class="buttons">
-            <a class="button is-primary">
+            <a class="button is-primary"  onclick="alert('暂不开放');" >
               <strong>Sign up</strong>
             </a>
-            <a class="button is-light">
+            <a class="button is-light"  onclick="alert('暂不开放');">
               Log in
             </a>
           </div>

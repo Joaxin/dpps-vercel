@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .scripts.neteaseMusicAPI import song_infos,album_infos
+from .scripts.neteaseMusicAPI import song_infos,album_infos,playlist_infos
 from django.http import HttpResponse
 from datetime import datetime
 # Create your views here.
@@ -12,6 +12,8 @@ def netease_song(request):
 def netease_album(request):
     return render(request, 'netease_id_album.html')
 
+def netease_playlist(request):
+    return render(request, 'netease_id_playlist.html')
 
 def music_url_tools(request):
     return render(request, 'netease_tools.html')
@@ -88,6 +90,39 @@ def netease_infos_album(request):
 	    '''
         return HttpResponse(html)
 
+def netease_infos_playlist(request):
+    pid = request.GET['pid']
+    print(pid)
+    now = datetime.now()
+    pattern = re.compile('.*https?:\/\/(y\.)?music\.163\.com\/(#\/|m\/)?(playlist\?id=|playlist\/)(\d+)(&|\?|\/\?)?(userid=\d+)?.*', re.S)
+    if re.search("^(\d+)$", pid):
+        pid = re.search("^(\d+)$", pid).group(1)
+    elif re.search(pattern, pid):
+        pid = re.search(pattern, pid).group(4)
+    else:
+        html = f'''
+        <html>
+            <body>
+                <h1>非法的URL或ID！</h1>
+            </body>
+        </html>
+        '''
+        return HttpResponse(html)
+
+    netease_infos_playlist = playlist_infos(pid)
+    if netease_infos_playlist:
+        return render(request, 'netease_infos_playlist.html', {'playlist_infos': netease_infos_playlist})
+    else:
+        now = datetime.now()
+        html = f'''
+        <html>
+            <body>
+                <h1>无效的歌单ID! 请访问<a href="http://music.163.com/playlist?id={pid}" target="_blank">http://music.163.com/playlist?id={pid}</a></h1>
+                <p>The current time is { now }.</p>
+            </body>
+        </html>
+        '''
+        return HttpResponse(html)
 
 def about(request):
     return render(request, 'about.html')

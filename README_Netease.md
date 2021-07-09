@@ -27,7 +27,12 @@ http://music.163.com/song?id=16323601
 https://music.163.com/#/song?id=16323601
 
 https://music.163.com/#/album?id=2084576
-https://music.163.com/#/album?id=2084576
+https://music.163.com/album?id=2084576
+
+网页端超过20首会显示 查看更多内容，请下载客户端
+https://music.163.com/#/playlist?id=5272670909
+https://music.163.com/playlist?id=5272670909
+自己歌单需登录: https://music.163.com/#/my/m/music/playlist?id=XXXX
 ```
 
 移动端
