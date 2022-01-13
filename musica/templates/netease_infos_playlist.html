@@ -25,20 +25,20 @@
                     <ul>
                         <li class="tab-A">
                             <label for="TabA"> <a>
-                                    <span class="icon is-small"><i class="fas fa-image" aria-hidden="true"></i></span>
+                                    <span class="icon is-small"><i class="fas fa-info-circle" aria-hidden="true"></i></span>
                                     <span>Playlist</span>
                                 </a></label>
                         </li>
                         <li class="tab-B">
                             <label for="TabB"> <a>
-                                    <span class="icon is-small"><i class="fas fa-music" aria-hidden="true"></i></span>
+                                    <span class="icon is-small"><i class="fas fa-list-ul" aria-hidden="true"></i></span>
                                     <span>SongList</span>
                                 </a></label>
 
                         </li>
                         <li class="tab-C">
                             <label for="TabC"> <a>
-                                    <span class="icon is-small"><i class="fas fa-film" aria-hidden="true"></i></span>
+                                    <span class="icon is-small"><i class="fas fa-grip-horizontal" aria-hidden="true"></i></span>
                                     <span>Gallery</span>
                                 </a></label>
                         </li>
@@ -85,8 +85,8 @@
                                     <img src="{{playlist_infos.playlist.playlist_coverImgUrl}}"
                                         alt="{{playlist_infos.playlist.playlist_name}}"
                                         style="width:250px;height:250px" />
-                                    <p>播放数：{{playlist_infos.playlist.playlist_subscribedCount}}
-                                    收藏数：{{playlist_infos.playlist.playlist_playCount}}</p>
+                                    <p>播放数：{{playlist_infos.playlist.playlist_playCount}}
+                                    收藏数：{{playlist_infos.playlist.playlist_subscribedCount}}</p>
                                     {% if playlist_infos.playlist.playlist_tags %}
                                     <p>标签：
                                     {% for tg in playlist_infos.playlist.playlist_tags  %}
@@ -115,6 +115,7 @@
                                     <th class="show_hide">链接</th>
                                     <th class="show_hide">下载MP3</th>
                                     <th class="show_hide">本站链接</th>
+                                    <th class="show_hide">豆瓣链接</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -166,6 +167,11 @@
                                             title="{{ s.song_title }}">本站链接</a>
 
                                     </td>
+                                    <td>
+                                        <a target="_blank" href="https://search.douban.com/music/subject_search?search_text={{s.song_album}}"
+                                            title="{{ s.song_title }}">豆瓣链接</a>
+
+                                    </td>
 
                                 </tr>
                                 {% endfor %}
@@ -173,26 +179,28 @@
                         </table>
                         <ul>
                             <li><span>显示/隐藏:</span></li>
-                            <li><label class="checkbox"><input type="checkbox" id="10"
+                            <li><label class="checkbox"><input type="checkbox" id="11"
                                         onchange="hide_show_table(this.id);"> 序号</label></li>
-                            <li><label class="checkbox"><input type="checkbox" id="9"
+                            <li><label class="checkbox"><input type="checkbox" id="10"
                                         onchange="hide_show_table(this.id);"> 专辑图片</label></li>
-                            <li><label class="checkbox"><input type="checkbox" id="8"
+                            <li><label class="checkbox"><input type="checkbox" id="9"
                                         onchange="hide_show_table(this.id);"> 歌曲标题</label></li>
-                            <li><label class="checkbox"><input type="checkbox" checked id="7"
+                            <li><label class="checkbox"><input type="checkbox" checked id="8"
                                         onchange="hide_show_table(this.id);"> 标题详细</label></li>
-                            <li><label class="checkbox"><input type="checkbox" id="6"
+                            <li><label class="checkbox"><input type="checkbox" id="7"
                                         onchange="hide_show_table(this.id);"> 歌手</label></li>
-                            <li><label class="checkbox"><input type="checkbox" checked  id="5"
+                            <li><label class="checkbox"><input type="checkbox" checked  id="6"
                                         onchange="hide_show_table(this.id);"> 歌手详细</label></li>
-                            <li><label class="checkbox"><input type="checkbox" id="4"
+                            <li><label class="checkbox"><input type="checkbox" id="5"
                                         onchange="hide_show_table(this.id);"> 专辑</label></li>
-                            <li><label class="checkbox"><input type="checkbox" checked  id="3"
+                            <li><label class="checkbox"><input type="checkbox" checked  id="4"
                                         onchange="hide_show_table(this.id);"> 链接</label></li>
-                            <li><label class="checkbox"><input type="checkbox" checked id="2"
+                            <li><label class="checkbox"><input type="checkbox" checked id="3"
                                         onchange="hide_show_table(this.id);"> 下载MP3</label></li>
-                            <li><label class="checkbox"><input type="checkbox" checked  id="1"
+                            <li><label class="checkbox"><input type="checkbox" checked  id="2"
                                         onchange="hide_show_table(this.id);"> 本站链接</label></li>
+                            <li><label class="checkbox"><input type="checkbox" checked  id="1"
+                                            onchange="hide_show_table(this.id);"> 豆瓣链接</label></li>
                         </ul>
                     </div>
                     <div class="tab-pane content-C">
@@ -201,7 +209,8 @@
                             {% for s in playlist_infos.tracks.values %}
                                         <div class="column is-3-tablet is-6-mobile">
                                             <img src="{{ s.song_album_pic }}"/>
-                                            <p class="is-size-6">{{ s.song_title }}</p>
+                                            <p class="is-size-6"><a target="_blank" href="{{s.song_url}}"
+                                                title="{{ s.song_title }}">{{ s.song_title }}</a></p>
                                             <p class="is-size-5">{{ s.song_album }}</p>
                                             
                                         </div>

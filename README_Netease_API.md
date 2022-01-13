@@ -1,4 +1,14 @@
-Pyncm From https://github.com/kitUIN/pyncm
+Pyncm From https://github.com/greats3an/pyncm
+
+![Logo](https://github.com/greats3an/pyncm/raw/master/demos/_logo.png)
+
+> NeteaseCloudMusic APIs for Python 3.x 适用于 Python 3 的网易云音乐 API
+>
+> ```
+> pip install pyncm
+> from pyncm import apis
+> ```
+
 API https://github.com/greats3an/pyncm/wiki
 
 ## API测试
@@ -11,6 +21,9 @@ http://music.163.com/song?id=427142070
 
 ```python
 apis.track.GetTrackDetail(427142070)
+// 正常播放，非VIP
+apis.track.GetTrackDetail(3356858653)
+// 无版权，非VIP
 ```
 
 ```
@@ -24,12 +37,12 @@ apis.track.GetTrackDetail(427142070)
    'st': 0,
    'rt': None,
    'fee': 0,
-   'v': 2, --------- 2或4
+   'v': 2, --------- 2或4或39 未知
    'crbt': None,
    'cf': '',
    'al': {'id': 34839317,
     'name': 'Lemon',
-    'picUrl': 'https://p2.music.126.net/djvRTkG93l1mkW4m-rkZ7g==/3417282151060043.jpg',
+    'picUrl': 'https://p2.music.126.net/djvRTkG93l1mkW4m-rkZ7g==/3417282151060043.jpg',  ----------专辑封面地址
     'tns': [],
     'pic': 3417282151060043},
    'dt': 315555,
@@ -43,7 +56,7 @@ apis.track.GetTrackDetail(427142070)
    'ftype': 0,
    'rtUrls': [],
    'djId': 0,
-   'copyright': 0, ----------版权0或2
+   'copyright': 0, ----------版权0(有版权)或1(无版权)和2(无版权，有其他版本)，比如有单独参数比如：'noCopyrightRcmd': {'type': 2, 'typeDesc': '其它版本可播', 'songId': None}
    's_id': 0,
    'mark': 262144,
    'originCoverType': 0,
@@ -59,7 +72,7 @@ apis.track.GetTrackDetail(427142070)
    'publishTime': 1447862400007}],
  'privileges': [{'id': 427142070,
    'fee': 0,
-   'payed': 0,
+   'payed': 0, ---是否付费，0为免费
    'st': 0,
    'pl': 320000,
    'dl': 320000,
@@ -99,7 +112,13 @@ apis.track.GetTrackDetail(427142070)
 
 ### Album
 
+```
+apis.album.GetAlbumInfo(2084576)
+```
+
 https://music.163.com/#/album?id=2084576
+
+> 有版权，非VIP
 
 ![](https://i.postimg.cc/WzHvkFLB/image.png)
 
@@ -114,13 +133,13 @@ https://music.163.com/#/album?id=2084576
     'tns': ['永恒之光'],
     'pic_str': '109951163028848374',
     'pic': 109951163028848374},
-   'st': 1,
+   'st': 1,    ---- 值为1或-1
    'noCopyrightRcmd': None,
    'rtype': 0,
    'rurl': None,
    'pst': 0,
    't': 0,
-   'pop': 25.0,
+   'pop': 25.0,  ------- 疑似热度
    'rt': '',
    'mst': 9,
    'cp': 663018,
@@ -927,7 +946,10 @@ apis.playlist.GetPlaylistInfo("413889091")
  }
 ```
 
+### User
 
+Verse： https://music.163.com/#/user/home?id=319322859
+关注列表: https://music.163.com/#/user/follows?id=319322859
 
 ## 爬虫测试
 
@@ -985,7 +1007,7 @@ print(audio.filename) ## C:\Users\ADMINI~1\AppData\Local\Temp\tmp7gzde11x 貌似
 print(audio.info.pprint()) ## MPEG 1 layer 3, 320000 bps (CBR), 44100 Hz, 2 chn, 267.34 seconds
 ```
 
-但上述方法比较慢，且好资源，我们直接用爬虫爬取网易云渲染后的页面，以http://music.163.com/album?id=2084576为例
+但上述方法比较慢，且消耗太多资源，我们直接用爬虫爬取网易云渲染后的页面，以http://music.163.com/album?id=2084576为例
 
 ```python
 

@@ -1,4 +1,5 @@
 {% extends 'musica_base.html' %}
+{% block title %}{{album_infos.album.album_name}}{% endblock %}
 {% load static %}
 {% block css %}
 <link href="{% static 'musica/music_infos.css' %}" rel="stylesheet" type="text/css" /> {% endblock css %}
@@ -17,20 +18,20 @@
                     <ul>
                         <li class="tab-A">
                             <label for="TabA"> <a>
-                                    <span class="icon is-small"><i class="fas fa-image" aria-hidden="true"></i></span>
+                                    <span class="icon is-small"><i class="fas fa-info-circle" aria-hidden="true"></i></span>
                                     <span>Album</span>
                                 </a></label>
                         </li>
                         <li class="tab-B">
                             <label for="TabB"> <a>
-                                    <span class="icon is-small"><i class="fas fa-music" aria-hidden="true"></i></span>
+                                    <span class="icon is-small"><i class="fas fa-list-ul" aria-hidden="true"></i></span>
                                     <span>SongList</span>
                                 </a></label>
 
                         </li>
                         <li class="tab-C">
                             <label for="TabC"> <a>
-                                    <span class="icon is-small"><i class="fas fa-film" aria-hidden="true"></i></span>
+                                    <span class="icon is-small"><i class="fas fa-grip-horizontal" aria-hidden="true"></i></span>
                                     <span>Infos</span>
                                 </a></label>
                         </li>
