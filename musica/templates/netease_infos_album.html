@@ -51,8 +51,11 @@
                                                 href="https://music.163.com/artist?id={{album_infos.album.album_artists_id}}">{{album_infos.album.album_artists}}</a></span>
                                
                                         <div class="column is-full-tablet is-10-widescreen is-full-fullhd">
+                                            {% if album_infos.album.album_name_tns %}
+                                            <p class="title is-4 mt-4">{{album_infos.album.album_name}}({{album_infos.album.album_name_tns.0}})</p>
+                                            {% else %}
                                             <p class="title is-4 mt-4">{{album_infos.album.album_name}}</p>
-                                            
+                                            {% endif %}
                                         </div>
                                         <div class="column is-full-tablet">
                                             <div>

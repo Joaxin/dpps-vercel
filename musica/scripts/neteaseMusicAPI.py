@@ -9,6 +9,7 @@ import re
 def song_infos(song_id):
     sg_infos = {}
     song_infos = apis.track.GetTrackDetail(song_id)
+    print(song_infos)
     artists = {"name":[],"aname":[],"url":[]}
     for ar in song_infos['songs'][0]['ar']:
         artists["name"].append(ar["name"])
@@ -29,13 +30,18 @@ def song_infos(song_id):
     title = song_infos['songs'][0]['name']
     sg_infos["artists"] = artists
     sg_infos["artists2"] = artists2
-    sg_infos["title"] = title
+    sg_infos["title"] = song_infos['songs'][0]['name']
+    if 'tns' in song_infos['songs'][0]:   ## 歌曲标题翻译
+        sg_infos["title_tns"] = song_infos['songs'][0]['tns'][0]
+    if song_infos['songs'][0]['alia']:  ## 歌曲标题注释
+        sg_infos["title_alia"] = song_infos['songs'][0]['alia'][0]
+    
     sg_infos["song_id"] = song_id
-    sg_infos["song_title"] = artists +" - "+ title ## 歌曲信息
-    sg_infos["song_title_"] = re.sub(r"[\(\[（].*?[\)\]）]", "", sg_infos["song_title"]) ## 歌曲信息去括号
+    sg_infos["song_title"] = artists +" - "+ title ## 歌曲完整标题
+    sg_infos["song_title_"] = re.sub(r"[\(\[（].*?[\)\]）]", "", sg_infos["song_title"]) ## 歌曲完整标题去冗余
     sg_infos["song_album_id"] =  str(song_infos['songs'][0]['al']["id"])  # 专辑ID
 
-    if song_infos['songs'][0]['noCopyrightRcmd'] != None:
+    if song_infos['songs'][0]['noCopyrightRcmd'] != None:   ## 版权注释
         sg_infos["song_copyright"] = False
         sg_infos["song_noCopyrightRcmd"] =  song_infos['songs'][0]['noCopyrightRcmd']
     elif song_infos['privileges'][0]['st'] == -200:
@@ -43,12 +49,14 @@ def song_infos(song_id):
     else:
         sg_infos["song_copyright"] = True
     
-    sg_infos["song_fee"] =  song_infos['privileges'][0]['fee'] # 是否付费
-    sg_infos["song_pop"] =  song_infos['songs'][0]['pop'] # 歌曲热度
+    sg_infos["song_fee"] =  song_infos['privileges'][0]['fee'] ## 是否付费
+    sg_infos["song_pop"] =  song_infos['songs'][0]['pop'] ## 歌曲热度
 
 
     album_infos = apis.album.GetAlbumInfo(sg_infos["song_album_id"])
     sg_infos["song_album"] =  song_infos['songs'][0]['al']["name"]  ## 专辑名称
+    sg_infos["song_album_tns"] =  song_infos['songs'][0]['al']["tns"]  ## 专辑名称翻译
+
     sg_infos["song_album_url"] =  "http://music.163.com/album?id=" + sg_infos["song_album_id"] ## 专辑URL
     sg_infos["song_album_pic"] = song_infos['songs'][0]['al']["picUrl"]  ## 专辑图片链接
     sg_infos["song_url"] = "http://music.163.com/song?id=" + str(song_id)  ## 歌曲URL
@@ -167,11 +175,14 @@ def playlist_infos(playlist_id):
 
 def album_infos(album_id):
     album_infos = apis.album.GetAlbumInfo(album_id)
+    print(album_infos)
     al_infos = {}
     try:
         al_infos["album"]={}
         al_infos["album"]["album_url"] = "http://music.163.com/album?id=" + str(album_infos['songs'][0]["al"]["id"]) ## 专辑URL
         al_infos["album"]["album_name"] = album_infos['album']["name"]  ## 专辑名称
+        al_infos["album"]["album_name_tns"] = album_infos['songs'][0]["ar"][0]["tns"]  ## 专辑名称翻译
+
         al_infos["album"]["album_picUrl"] = album_infos['album']['picUrl']   ## 专辑图片
         al_infos["album"]["album_publishTime"] = time.strftime("%Y-%m-%d",time.localtime(album_infos['album']['publishTime']/1000)) ## 专辑发行时间
         al_infos["album"]["album_description"] = album_infos['album']["description"]  ## 专辑简介
@@ -216,5 +227,7 @@ def album_infos(album_id):
         return(al_infos)
     except:
         return(al_infos)
+
+
 if __name__ == '__main__':
     pass

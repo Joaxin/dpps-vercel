@@ -64,7 +64,11 @@
                                                 style="width:96px;height:96px"></a>
                                         </div>
                                         <div class="column is-full-tablet is-10-widescreen is-full-fullhd">
+                                            {% if song_infos.title_tns %}
+                                            <p class="title is-4">{{song_infos.title}}<span>({{song_infos.title_tns}})</span></p>
+                                            {% else %}
                                             <p class="title is-4">{{song_infos.title}}</p>
+                                            {% endif %}
                                             <p class="subtitle is-6">@ 
                                             {% for ar in song_infos.artists2 %}
                                                 {% if ar.1 %}
@@ -84,6 +88,9 @@
                                                 所属专辑: <a target="_blank"
                                                     href="{{song_infos.song_album_url}}">{{song_infos.song_album}}</a>
                                             </div>
+                                            {% if song_infos.title_alia %}
+                                            <p><span>{{song_infos.title_alia}}</span></p>
+                                            {% endif %}
                                             <p>
                                                  {% if not song_infos.song_copyright %}
                                                         无版权 <a href="https://y.qq.com/n/ryqq/search?w={{song_infos.song_title}}" target="_blank">尝试QQ音乐搜索</a>
@@ -95,21 +102,22 @@
                                                         付费
                                                  {% endif %}
                                             <br/>热度：{{song_infos.song_pop}}</p>
-                                            <br>
+
+                                   
                                             <time datetime="{{song_infos.song_album_publishTime}}">发行时间:
                                                 {{song_infos.song_album_publishTime}}</time>
                                         </div>
                                     </div>
                                     <button class="btn button is-info mt-5"
-                                        data-clipboard-text="{{song_infos.song_title}}">
+                                        data-clipboard-text="{{song_infos.song_title}}{% if song_infos.title_tns %}({{song_infos.title_tns}}){% endif %}">
                                         复制歌曲标题
                                     </button>
                                     <button class="btn button is-info mt-5"
-                                        data-clipboard-text="{{song_infos.song_title}}&#xa;{{song_infos.song_url}}{% if not song_infos.song_copyright %}【无版权】{% endif %}{% if song_infos.song_fee != 0 %}【VIP】{% endif %}&#xa;{M{{song_infos.song_id}}}">
+                                        data-clipboard-text="{{song_infos.song_title}}&#xa;{{song_infos.song_url}}{% if not song_infos.song_copyright %}【无版权】{% endif %}{% if song_infos.song_fee == 1 %}【VIP】{% endif %}&#xa;{M{{song_infos.song_id}}}">
                                         复制歌曲信息(Melting)
                                     </button>
                                     <button class="btn button is-info mt-5"
-                                        data-clipboard-text="[{{song_infos.song_title}}]({{song_infos.song_url}}){% if not song_infos.song_copyright %}【无版权】{% endif %}{% if song_infos.song_fee != 0 %}【VIP】{% endif %}&#xa;{N{{song_infos.song_id}}}">
+                                        data-clipboard-text="[{{song_infos.song_title}}]({{song_infos.song_url}}){% if not song_infos.song_copyright %}【无版权】{% endif %}{% if song_infos.song_fee == 1 %}【VIP】{% endif %}&#xa;{N{{song_infos.song_id}}}">
                                         复制歌曲信息(Netease)
                                     </button>
                                     <br>
