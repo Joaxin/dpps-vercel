@@ -1,0 +1,114 @@
+{% extends 'musica_base.html' %}
+{% block body %}
+<div class="columns">
+
+  <div class="column is-8 is-offset-2">
+    <p class="title pt-5">
+      网易云歌单比对工具
+    </p>
+    <form action=".">
+          
+          <div class="box">
+            <label for="pid1" class="subtitle">ID：歌单1</label>
+            <input class="input" type="text" name="pid1" value="">
+            <label for="pid2" class="subtitle">ID：歌单2</label>
+            <input class="input" type="text" name="pid2" value="">
+            <label class="checkbox">
+              <input type="checkbox" name="quick_mode">
+              快速模式
+            </label>
+            <br>
+            <button type="submit" class="button is-info mt-2">
+              开始比对
+            </button>
+        </div>
+      </form>
+  </div>
+</div>
+
+
+<div class="columns is-multiline">
+
+
+    {% if pl_1not2 %}
+    {% if quick_mode != 0 and pl_2not1 %}
+    <div class="column is-8  is-offset-2">
+    {% elif quick_mode == 0 and pl_2not1  %}
+    <div class="column is-4  is-offset-2">
+    {% else %}
+    <div class="column is-8  is-offset-2">
+    {% endif %}
+    <p>在歌单1【{{ playlist1_name }}】<br/>不在歌单2【{{playlist2_name}}】:</p>
+  <table id="playlist_compare1" class="table">
+    <thead>
+        <tr>
+          <th>序号</th>
+            <th>歌曲序号</th>
+            <th>歌曲ID</th>
+            {% if quick_mode != 0 %}
+            <th>歌曲标题</th>
+            <th>所属专辑</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+      {% for s in pl_1not2.items %}
+      <tr>
+        <td>{{ s.1.0 }}</td>
+        <td>{{ s.0 }}</td>
+        <td><a target="_blank" href="http://music.163.com/song?id= {{ s.1.1 }}">{{ s.1.1 }}</a></td>
+        {% if quick_mode != 0 %}
+        <td>{{ s.1.2|truncatechars:50 }}</td>
+        <td>{{ s.1.3 }}</td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table> 
+  {% endif %}
+</div>
+
+
+  {% if pl_2not1 %}
+  {% if quick_mode != 0 and pl_1not2 %}
+  <div class="column is-8  is-offset-2">
+  {% elif quick_mode == 0 and pl_1not2  %}
+  <div class="column is-4">
+  {% else %}
+  <div class="column is-8  is-offset-2">
+  {% endif %}
+  <p>在歌单2【{{playlist2_name}}】<br/>不在歌单1【{{ playlist1_name }}】:</p>
+  <table id="playlist_compare2" class="table">
+    <thead>
+        <tr>
+          <th>序号</th>
+            <th>歌曲序号</th>
+            <th>歌曲ID</th>
+            {% if quick_mode != 0 %}
+            <th>歌曲标题</th>
+            <th>所属专辑</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+      {% for s in pl_2not1.items %}
+      <tr>
+        <td>{{ s.1.0 }}</td>
+        <td>
+          {{ s.0 }}
+        </td>
+        <td><a target="_blank" href="http://music.163.com/song?id= {{ s.1.1 }}">{{ s.1.1 }}</a></td>
+        {% if quick_mode != 0 %}
+        <td>{{ s.1.2|truncatechars:50 }}</td>
+        <td>{{ s.1.3 }}</td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table> 
+  </div>
+</div>
+{% endif %}
+
+
+{% endblock %}

@@ -12,7 +12,7 @@
         <hr>
         <input id="netease_id" class="input" type="text" value=""  style="width: 100px;"  />
         <button class="btn button is-info" data-clipboard-action="copy" data-clipboard-target="#netease_id">
-            Copy
+            复制歌单ID
         </button>
     </div>
 </div>
@@ -30,7 +30,7 @@
         // ?userid=XXXXX or &userid=XXXXX
         userid = url.replace(re, "$6")
         netease_user_url = "https://music.163.com/#/user/home?id=" + userid.match(/\d/g).join("");
-        document.querySelector(".help").innerHTML = `<a href = "${netease_user_url}" target="_blank">${netease_user_url}</a>`
+        document.querySelector(".help").innerHTML = `用户主页：<a href = "${netease_user_url}" target="_blank">${netease_user_url}</a>`
     }
     console.log(netease_id);
     }

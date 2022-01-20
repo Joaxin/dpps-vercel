@@ -9,7 +9,7 @@ import re
 def song_infos(song_id):
     sg_infos = {}
     song_infos = apis.track.GetTrackDetail(song_id)
-    print(song_infos)
+    # print(song_infos)
     artists = {"name":[],"aname":[],"url":[]}
     for ar in song_infos['songs'][0]['ar']:
         artists["name"].append(ar["name"])
@@ -71,18 +71,24 @@ def song_infos(song_id):
         sg_infos["song_lyric_url"] = "https://music.163.com/api/song/lyric?id=" + str(song_id)  + "&lv=1&kv=1&tv=-1"
         sg_infos["song_lyric"]  = song_lyric['lrc']['lyric']
         lys = utils.lrcparser.LrcParser(sg_infos["song_lyric"])
+        
         lys = dict(lys.lyrics_sorted)
-        ## 歌词格式 {0.0: [('00:00.000', ' 作词 : 月吟诗')],1.0: [('00:01.000', ' 作曲 : 月吟诗')],..}
-        if 'tlyric' in song_lyric:
-            sg_infos["song_tlyric"]  = song_lyric['tlyric']['lyric']
-            lyst = utils.lrcparser.LrcParser(sg_infos["song_tlyric"])
-            lyst = dict(lyst.lyrics_sorted)
-            ## defaultdict(<class 'list'>, {9.71: [('00:09.71', '在城市里徘徊，目光注视着地面')], 
-            # lys = {**lys.lyrics_sorted, **lyst.lyrics_sorted} ## combine dict but will overwrite
-            for k in lys.keys():
-                if lyst.get(k):
-                    lys[k] = [(lys[k][0][0],lys[k][0][1]  + "\n" + lyst[k][0][1])]
-        sg_infos["song_lyric_dict"]  = lys
+        if not lys:
+            sg_infos["song_lyric_dict"]  = song_lyric['lrc']['lyric'] ## 该歌词不支持自动滚动
+            sg_infos["song_lyric_noscroll"]  = True
+            print(sg_infos)
+        else:
+            ## 歌词格式 {0.0: [('00:00.000', ' 作词 : 月吟诗')],1.0: [('00:01.000', ' 作曲 : 月吟诗')],..}
+            if 'tlyric' in song_lyric:
+                sg_infos["song_tlyric"]  = song_lyric['tlyric']['lyric']
+                lyst = utils.lrcparser.LrcParser(sg_infos["song_tlyric"])
+                lyst = dict(lyst.lyrics_sorted)
+                ## defaultdict(<class 'list'>, {9.71: [('00:09.71', '在城市里徘徊，目光注视着地面')], 
+                # lys = {**lys.lyrics_sorted, **lyst.lyrics_sorted} ## combine dict but will overwrite
+                for k in lys.keys():
+                    if lyst.get(k):
+                        lys[k] = [(lys[k][0][0],lys[k][0][1]  + "\n" + lyst[k][0][1])]
+            sg_infos["song_lyric_dict"]  = lys
 
         # for item in lyricss:
         #     print(lyricss[item]
@@ -155,7 +161,10 @@ def playlist_infos(playlist_id):
                         artists["url"].append("https://music.163.com/artist?id=" + str(ar.get("id","")))
                     artists2 = list(zip(*[artists[key] for key in artists]))
                     artists_name = "/".join(artists["name"])
-                    title = song_infos['songs'][0]['name']
+                    if (song_infos['songs'][0]['noCopyrightRcmd'] != None) or (song_infos['privileges'][0]['st'] == -200):   ## 版权注释
+                        title = "*" + song_infos['songs'][0]['name']
+                    else:
+                        title = song_infos['songs'][0]['name']
                     sg_infos = {}
                     sg_infos["artists"] = artists
                     sg_infos["artists2"] = artists2
@@ -163,6 +172,7 @@ def playlist_infos(playlist_id):
                     sg_infos["title"] = title
                     sg_infos["song_title"] = artists_name + " - "+ title  ## 歌曲信息
                     sg_infos["song_id"] =  pl["id"]  ## 歌曲ID
+                    
                     sg_infos["song_album"] =  song_infos['songs'][0]['al']["name"]   ## 专歌曲辑名称
                     sg_infos["song_album_pic"] =  song_infos['songs'][0]['al']["picUrl"]   ## 歌曲专辑图片
                     sg_infos["song_url"] = "http://music.163.com/song?id=" + str(pl["id"])  ## 歌曲URL
@@ -181,7 +191,8 @@ def album_infos(album_id):
         al_infos["album"]={}
         al_infos["album"]["album_url"] = "http://music.163.com/album?id=" + str(album_infos['songs'][0]["al"]["id"]) ## 专辑URL
         al_infos["album"]["album_name"] = album_infos['album']["name"]  ## 专辑名称
-        al_infos["album"]["album_name_tns"] = album_infos['songs'][0]["ar"][0]["tns"]  ## 专辑名称翻译
+        if 'tns' in album_infos['songs'][0]["ar"][0]:
+            al_infos["album"]["album_name_tns"] = album_infos['songs'][0]["ar"][0]["tns"]  ## 专辑名称翻译
 
         al_infos["album"]["album_picUrl"] = album_infos['album']['picUrl']   ## 专辑图片
         al_infos["album"]["album_publishTime"] = time.strftime("%Y-%m-%d",time.localtime(album_infos['album']['publishTime']/1000)) ## 专辑发行时间
@@ -228,6 +239,49 @@ def album_infos(album_id):
     except:
         return(al_infos)
 
+def playlist_infos_compare(playlist_id1,playlist_id2,simplified = False):
+    playlist1 = apis.playlist.GetPlaylistInfo(playlist_id1) 
+    playlist2 = apis.playlist.GetPlaylistInfo(playlist_id2)
+    playlist1_name = playlist1["playlist"]["name"] 
+    playlist2_name = playlist2["playlist"]["name"] 
+    ## e.g 487650032(170) 7244723111(153)
+    playlist1_trackIds = playlist1["playlist"]['trackIds']
+    playlist2_trackIds = playlist2["playlist"]['trackIds']
+    playlist1_trackIds = [tracks['id'] for tracks in playlist1_trackIds] ## 扁平化为ID列表
+    playlist2_trackIds = [tracks['id'] for tracks in playlist2_trackIds]
+    
+    pl_1not2 = {}
+    playlist_diff = 0
+    for i in playlist1_trackIds:   ## 歌单1有而歌单2没有
+        if i not in playlist2_trackIds:
+            playlist_diff+=1
+            if simplified:
+                pl_1not2[playlist1_trackIds.index(i)+1]=[playlist_diff,i]
+            else:
+                song_infos = apis.track.GetTrackDetail(i)
+                artists = []
+                for ar in song_infos['songs'][0]['ar']:
+                    artists.append(ar["name"])
+                artists = "/".join(artists)
+                title = song_infos['songs'][0]['name']
+                pl_1not2[playlist1_trackIds.index(i)+1] = [playlist_diff,i, artists +" - "+ title,song_infos['songs'][0]['al']["name"] ]
+                
+    pl_2not1 = {}
+    playlist_diff = 0
+    for i in playlist2_trackIds:   ## 歌单1有而歌单2没有
+        if i not in playlist1_trackIds:
+            playlist_diff+=1
+            if simplified:
+                pl_2not1[playlist2_trackIds.index(i)+1]=[playlist_diff,i]
+            else:
+                song_infos = apis.track.GetTrackDetail(i)
+                artists = []
+                for ar in song_infos['songs'][0]['ar']:
+                    artists.append(ar["name"])
+                artists = "/".join(artists)
+                title = song_infos['songs'][0]['name']
+                pl_2not1[playlist2_trackIds.index(i)+1] = [playlist_diff,i, artists +" - "+ title,song_infos['songs'][0]['al']["name"] ]
+    return [pl_1not2,pl_2not1,playlist1_name,playlist2_name]
 
 if __name__ == '__main__':
     pass

@@ -1,5 +1,5 @@
 以Haruka Nakamura - Twilight为例：
-```js
+```html
 <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=22701029&auto=0&height=66"></iframe>
 ```
 
@@ -42,6 +42,7 @@ https://music.163.com/m/song?id=16323601&userid=XXXXXX&from=timeline&isappinstal
 # timeline：朋友圈 APP 是否安装（is app installed）
 https://y.music.163.com/m/song?id=16323601
 分享Andrea Bocelli/Sarah Brightman的单曲《Time To Say Goodbye (Con Te Partirò)》: https://y.music.163.com/m/song/16323601/?userid=XXXXXX&app_version=7.3.28 (来自@网易云音乐)
+
 https://y.music.163.com/m/song?id=16323601&uct=5rWe9qDpKcHMjsbB6LxZwQ%253D%253D&app_version=8.2.31&sc=wm
 // 最新版的userid已加密
 ```

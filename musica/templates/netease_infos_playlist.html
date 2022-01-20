@@ -180,26 +180,26 @@
                         <ul>
                             <li><span>显示/隐藏:</span></li>
                             <li><label class="checkbox"><input type="checkbox" id="11"
-                                        onchange="hide_show_table(this.id);"> 序号</label></li>
+                                        onchange="hide_show_table(this.id);" checked> 序号</label></li>
                             <li><label class="checkbox"><input type="checkbox" id="10"
-                                        onchange="hide_show_table(this.id);"> 专辑图片</label></li>
+                                        onchange="hide_show_table(this.id);" checked> 专辑图片</label></li>
                             <li><label class="checkbox"><input type="checkbox" id="9"
-                                        onchange="hide_show_table(this.id);"> 歌曲标题</label></li>
-                            <li><label class="checkbox"><input type="checkbox" checked id="8"
+                                        onchange="hide_show_table(this.id);" checked> 歌曲标题</label></li>
+                            <li><label class="checkbox"><input type="checkbox" id="8"
                                         onchange="hide_show_table(this.id);"> 标题详细</label></li>
                             <li><label class="checkbox"><input type="checkbox" id="7"
-                                        onchange="hide_show_table(this.id);"> 歌手</label></li>
-                            <li><label class="checkbox"><input type="checkbox" checked  id="6"
+                                        onchange="hide_show_table(this.id);" checked> 歌手</label></li>
+                            <li><label class="checkbox"><input type="checkbox"  id="6"
                                         onchange="hide_show_table(this.id);"> 歌手详细</label></li>
                             <li><label class="checkbox"><input type="checkbox" id="5"
                                         onchange="hide_show_table(this.id);"> 专辑</label></li>
-                            <li><label class="checkbox"><input type="checkbox" checked  id="4"
+                            <li><label class="checkbox"><input type="checkbox"  id="4"
                                         onchange="hide_show_table(this.id);"> 链接</label></li>
-                            <li><label class="checkbox"><input type="checkbox" checked id="3"
+                            <li><label class="checkbox"><input type="checkbox" id="3"
                                         onchange="hide_show_table(this.id);"> 下载MP3</label></li>
                             <li><label class="checkbox"><input type="checkbox" checked  id="2"
                                         onchange="hide_show_table(this.id);"> 本站链接</label></li>
-                            <li><label class="checkbox"><input type="checkbox" checked  id="1"
+                            <li><label class="checkbox"><input type="checkbox"  id="1"
                                             onchange="hide_show_table(this.id);"> 豆瓣链接</label></li>
                         </ul>
                     </div>
@@ -235,6 +235,7 @@
         bg.style.backgroundPosition = "center";
     }
     bg_overlay("{{playlist_infos.playlist.playlist_creator_backgroundUrl}}");
+    
     new ClipboardJS(".btn", {
         text: function (trigger) {
             var s = trigger.getAttribute("data-clipboard-text");
@@ -245,37 +246,63 @@
             return s;
         }
     });
-</script>
-<script>
+    
     function hide_show_table(idx) {
-        let checkbox_val = document.getElementById(idx).checked;
-        // The nth-child selector also counts hidden elements
-        // select nth td
-        td_ = "td:nth-last-of-type(" + idx + ")";
-        // select nth th with class show_hide
-        th_ = "th.show_hide:nth-last-of-type(" + idx + ")";
-        console.log(td_, th_);
-
-        if (checkbox_val) {
-            let all_col = document.querySelectorAll(td_);
-            for (let i = 0; i < all_col.length; i++) {
-                all_col[i].style.display = "none";
+        if (idx instanceof Array) {
+            for (let ix = 0; ix < idx.length; ix++) {
+                let checkbox_val = document.getElementById(idx[ix]).checked;
+                // The nth-child selector also counts hidden elements
+                // select nth td
+                td_ = "td:nth-last-of-type(" + idx[ix] + ")";
+                // select nth th with class show_hide
+                th_ = "th.show_hide:nth-last-of-type(" + idx[ix] + ")";
+                
+                let all_col = document.querySelectorAll(td_);
+                if (!checkbox_val) {
+                    for (let i = 0; i < all_col.length; i++) {
+                        all_col[i].style.display = "none";
+                    }
+                    document.querySelector(th_).style.display = "none";
+                } else {
+                    for (let i = 0; i < all_col.length; i++) {
+                        all_col[i].style.display = "table-cell";
+                    }
+                    document.querySelector(th_).style.display = "table-cell";
+                }
             }
-            document.querySelector(th_).style.display = "none";
-        }
-
-        else {
-            let all_col = document.querySelectorAll(td_);
-            for (let i = 0; i < all_col.length; i++) {
-                all_col[i].style.display = "table-cell";
-            }
-            document.querySelector(th_).style.display = "table-cell";
+        } else {
+            return hide_show_table([idx])
         }
     }
-    hide_show_table(7);
-    hide_show_table(5);
-    hide_show_table(3);
-    hide_show_table(2);
-    hide_show_table(1);
-    </script>
+
+    function hide_show_table(idx) {
+       if (idx instanceof Array) {
+           for (let ix = 0; ix < idx.length; ix++) {
+               let checkbox_val = document.getElementById(idx[ix]).checked;
+               // The nth-child selector also counts hidden elements
+               // select nth td
+               td_ = "td:nth-last-of-type(" + idx[ix] + ")";
+               // select nth th with class show_hide
+               th_ = "th.show_hide:nth-last-of-type(" + idx[ix] + ")";
+
+               let all_col = document.querySelectorAll(td_);
+               if (!checkbox_val) {
+                   for (let i = 0; i < all_col.length; i++) {
+                       all_col[i].style.display = "none";
+                   }
+                   document.querySelector(th_).style.display = "none";
+               } else {
+                   for (let i = 0; i < all_col.length; i++) {
+                       all_col[i].style.display = "table-cell";
+                   }
+                   document.querySelector(th_).style.display = "table-cell";
+               }
+           }
+       } else {
+           return hide_show_table([idx])
+       }
+   }
+
+   hide_show_table([11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
+</script>
 {% endblock js %}

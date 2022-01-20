@@ -68,7 +68,7 @@
                                             <br>
                                             <time datetime="{{album_infos.song_album_publishTime}}">发行时间:
                                                 {{album_infos.album.album_publishTime}}</time>
-                                            <br>
+                                            <hr>
                                             <div class="description">{{album_infos.album.album_description}}</div>
                                         </div>
                                     </div>
@@ -91,7 +91,9 @@
                     <th class="show_hide">歌手</th>
                     <th class="show_hide">歌手详细</th>
                     <!-- <th>歌曲时长</th> -->
-                    <th class="show_hide">链接</th>
+                    <th class="show_hide">试听</th>
+                    <th class="show_hide">下载MP3</th>
+                    <th class="show_hide">本站链接</th>
                 </tr>
             </thead>
             <tbody>
@@ -120,11 +122,12 @@
                     </td>
                     <td>
                         <a target="_blank" href="{{s.song_url}}" title="{{s.song_title}}" download="{{s.song_title}}.mp3">试听</a>
-                        <a target="_blank" href="{{s.song_mp3}}" title="{{s.song_title}}" download="{{s.song_title}}.mp3">下载MP3</a>
-                        <a target="_blank" href="/s/netease/?sid={{s.song_id}}" title="{{ s.song_title }}" >本站链接</a>
+
                         
                     </td>
-                    
+                    <td> <a target="_blank" href="{{s.song_mp3}}" title="{{s.song_title}}" download="{{s.song_title}}.mp3">下载MP3</a></td>
+                   <td><a target="_blank" href="/s/netease/?sid={{s.song_id}}" title="{{ s.song_title }}" >本站链接</a>  </td>
+                                
                 </tr>
              {% endfor %}
             </tbody>
@@ -182,6 +185,7 @@ checkbox_list.unshift("<ul><li><span>显示/隐藏:</span></li>");
 checkbox_list.push("</ul>");
 colsCon.innerHTML += checkbox_list.join("");
 document.querySelectorAll('.cols-control li').forEach(e => e.setAttribute("style", "display:inline-block;font-weight:bold;margin:5px;"));
+
 function hide_show_table(idx)
 {
  let checkbox_val=document.getElementById(idx).value;

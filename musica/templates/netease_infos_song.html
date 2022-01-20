@@ -155,10 +155,15 @@
                         <a target="_blank" href="{{song_infos.song_lyric_url}}">下载歌词(JSON)</a>
                         {% endif %}
                         <hr>
-                        {% if song_infos.song_lyric_dict %}
-                        {% for lyric_t,lyric_tl in song_infos.song_lyric_dict.items %}
-                        {{lyric_tl.0.1| linebreaks}}
-                        {% endfor %}
+                        {% if song_infos.song_lyric_noscroll %}
+                        <b>该歌词不支持自动滚动</b>
+                        {{song_infos.song_lyric| linebreaks}}
+                    
+                        {% elif song_infos.song_lyric_dict %}
+                            {% for lyric_t,lyric_tl in song_infos.song_lyric_dict.items %}
+                            {{lyric_tl.0.1| linebreaks}}
+                            {% endfor %}
+       
                         {% elif song_infos.song_lyric %}
                         <p> 纯音乐，请欣赏</p>
                         {% else %}

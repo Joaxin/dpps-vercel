@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .scripts.neteaseMusicAPI import song_infos,album_infos,playlist_infos
+from .scripts.neteaseMusicAPI import song_infos,album_infos,playlist_infos,playlist_infos_compare
 from django.http import HttpResponse
 from datetime import datetime
 # Create your views here.
@@ -124,5 +124,60 @@ def netease_infos_playlist(request):
         '''
         return HttpResponse(html)
 
-def about(request):
-    return render(request, 'about.html')
+def netease_playlist_compare(request):
+    # print(request.GET)
+    if request.GET:
+        pid1 = request.GET['pid1']
+        pid2 = request.GET['pid2']
+        quick_mode = request.GET.get('quick_mode',None)
+
+        pattern = re.compile('.*https?:\/\/(y\.)?music\.163\.com\/(#\/|m\/)?(playlist\?id=|playlist\/)(\d+)(&|\?|\/\?)?(userid=\d+)?.*', re.S)
+        if re.search("^(\d+)$", pid1):
+            pid1 = re.search("^(\d+)$", pid1).group(1)
+        elif re.search(pattern, pid1):
+            pid1 = re.search(pattern, pid1).group(4)
+        else:
+            html = f'''
+            <html>
+                <body>
+                    <h1>非法的URL或ID！(请检查歌单ID1)</h1>
+                </body>
+            </html>
+            '''
+            return HttpResponse(html)
+
+        if re.search("^(\d+)$", pid2):
+            pid2 = re.search("^(\d+)$", pid2).group(1)
+        elif re.search(pattern, pid2):
+            pid2 = re.search(pattern, pid2).group(4)
+        else:
+            html = f'''
+            <html>
+                <body>
+                    <h1>非法的URL或ID！(请检查歌单ID2)</h1>
+                </body>
+            </html>
+            '''
+            return HttpResponse(html)
+        if quick_mode == "on":
+            netease_infos_playlist_compare = playlist_infos_compare(pid1,pid2,simplified = True)
+            quick_mode = 0
+        else:
+            netease_infos_playlist_compare = playlist_infos_compare(pid1,pid2)
+            quick_mode = 1
+        if netease_infos_playlist_compare:
+            # print({'pl_1not2': netease_infos_playlist_compare[0],'pl_2not1': netease_infos_playlist_compare[1],'playlist1_name':netease_infos_playlist_compare[2],'playlist2_name':netease_infos_playlist_compare[3],'quick_mode':quick_mode })
+            return render(request, 'netease_id_playlist_compare.html', {'pl_1not2': netease_infos_playlist_compare[0],'pl_2not1': netease_infos_playlist_compare[1],'playlist1_name':netease_infos_playlist_compare[2],'playlist2_name':netease_infos_playlist_compare[3],'quick_mode':quick_mode})
+        else:
+            html = f'''
+            <html>
+                <body>
+                    <h1>无效的歌单ID! 请访问<a href="http://music.163.com/playlist?id={pid1}" target="_blank">http://music.163.com/playlist?id={pid1}</a></h1>或者
+                    <h1>无效的歌单ID! 请访问<a href="http://music.163.com/playlist?id={pid2}" target="_blank">http://music.163.com/playlist?id={pid2}</a></h1>检查
+                </body>
+            </html>
+            '''
+            return HttpResponse(html)
+    else:
+        return render(request, 'netease_id_playlist_compare.html')
+
