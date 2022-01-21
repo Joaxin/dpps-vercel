@@ -130,6 +130,7 @@ def netease_playlist_compare(request):
         pid1 = request.GET['pid1']
         pid2 = request.GET['pid2']
         quick_mode = request.GET.get('quick_mode',None)
+        similar_mode = request.GET.get('similar_mode',None)
 
         pattern = re.compile('.*https?:\/\/(y\.)?music\.163\.com\/(#\/|m\/)?(playlist\?id=|playlist\/)(\d+)(&|\?|\/\?)?(userid=\d+)?.*', re.S)
         if re.search("^(\d+)$", pid1):
@@ -159,15 +160,27 @@ def netease_playlist_compare(request):
             </html>
             '''
             return HttpResponse(html)
+        
+        if similar_mode == "on":
+            similar_mode = True
+        else:
+            similar_mode = False
+        
+        print(similar_mode)
         if quick_mode == "on":
-            netease_infos_playlist_compare = playlist_infos_compare(pid1,pid2,simplified = True)
+            netease_infos_playlist_compare = playlist_infos_compare(pid1,pid2,simplified = True,similar_mode = similar_mode)
             quick_mode = 0
         else:
-            netease_infos_playlist_compare = playlist_infos_compare(pid1,pid2)
+            netease_infos_playlist_compare = playlist_infos_compare(pid1,pid2,simplified = False,similar_mode = similar_mode)
             quick_mode = 1
+        
         if netease_infos_playlist_compare:
-            # print({'pl_1not2': netease_infos_playlist_compare[0],'pl_2not1': netease_infos_playlist_compare[1],'playlist1_name':netease_infos_playlist_compare[2],'playlist2_name':netease_infos_playlist_compare[3],'quick_mode':quick_mode })
-            return render(request, 'netease_id_playlist_compare.html', {'pl_1not2': netease_infos_playlist_compare[0],'pl_2not1': netease_infos_playlist_compare[1],'playlist1_name':netease_infos_playlist_compare[2],'playlist2_name':netease_infos_playlist_compare[3],'quick_mode':quick_mode})
+            return render(request, 'netease_id_playlist_compare.html', 
+            {'pl_1not2': netease_infos_playlist_compare[0],'pl_2not1': netease_infos_playlist_compare[1],
+            'playlist':{'plname1':netease_infos_playlist_compare[2],'plname2':netease_infos_playlist_compare[3],"plen1":netease_infos_playlist_compare[4],"plen2":netease_infos_playlist_compare[5]},
+            'pl_12':netease_infos_playlist_compare[6],
+            'quick_mode':quick_mode,
+            "pid":{"pid1":pid1,"pid2":pid2}})
         else:
             html = f'''
             <html>

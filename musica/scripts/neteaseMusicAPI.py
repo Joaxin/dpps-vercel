@@ -66,7 +66,7 @@ def song_infos(song_id):
     sg_infos["song_lyric_url"] = ""
     song_lyric = apis.track.GetTrackLyrics(song_id, lv=-1, tv=-1, rv=-1)
     if song_lyric.get('nolyric'):
-        sg_infos["song_lyric"]  = "纯音乐，请欣赏"
+        sg_infos["song_lyric"]  = "纯音乐,请欣赏"
     elif song_lyric['lrc']:
         sg_infos["song_lyric_url"] = "https://music.163.com/api/song/lyric?id=" + str(song_id)  + "&lv=1&kv=1&tv=-1"
         sg_infos["song_lyric"]  = song_lyric['lrc']['lyric']
@@ -83,7 +83,7 @@ def song_infos(song_id):
                 sg_infos["song_tlyric"]  = song_lyric['tlyric']['lyric']
                 lyst = utils.lrcparser.LrcParser(sg_infos["song_tlyric"])
                 lyst = dict(lyst.lyrics_sorted)
-                ## defaultdict(<class 'list'>, {9.71: [('00:09.71', '在城市里徘徊，目光注视着地面')], 
+                ## defaultdict(<class 'list'>, {9.71: [('00:09.71', '在城市里徘徊,目光注视着地面')], 
                 # lys = {**lys.lyrics_sorted, **lyst.lyrics_sorted} ## combine dict but will overwrite
                 for k in lys.keys():
                     if lyst.get(k):
@@ -145,7 +145,7 @@ def playlist_infos(playlist_id):
             sg_infos["song_mp3"] = "http://music.163.com/song/media/outer/url?id=" + str(pl["id"])  + ".mp3"   ## 歌曲MP3
             pl_infos["tracks"][i] = sg_infos
             pl_infos["tracks"][i]["idx"] = i + 1
-        ##  查看更多内容，请下载客户端
+        ##  查看更多内容,请下载客户端
         if len(playlist_infos["playlist"]['trackIds'])>10:
             for i,pl in enumerate(playlist_infos["playlist"]['trackIds']):
                 if i>9:
@@ -239,7 +239,7 @@ def album_infos(album_id):
     except:
         return(al_infos)
 
-def playlist_infos_compare(playlist_id1,playlist_id2,simplified = False):
+def playlist_infos_compare(playlist_id1,playlist_id2,simplified = False,similar_mode=False):
     playlist1 = apis.playlist.GetPlaylistInfo(playlist_id1) 
     playlist2 = apis.playlist.GetPlaylistInfo(playlist_id2)
     playlist1_name = playlist1["playlist"]["name"] 
@@ -249,7 +249,26 @@ def playlist_infos_compare(playlist_id1,playlist_id2,simplified = False):
     playlist2_trackIds = playlist2["playlist"]['trackIds']
     playlist1_trackIds = [tracks['id'] for tracks in playlist1_trackIds] ## 扁平化为ID列表
     playlist2_trackIds = [tracks['id'] for tracks in playlist2_trackIds]
+    playlist1_len = len(playlist1_trackIds)  ## 歌单歌曲数量
+    playlist2_len = len(playlist2_trackIds)
     
+    pl_12 = {}
+    if similar_mode:
+        playlist_sim = 0
+        for i in playlist1_trackIds:   ## 歌单1有而歌单2没有
+            if i in playlist2_trackIds:
+                playlist_sim+=1
+                if simplified:
+                    pl_12[playlist_sim]=[playlist1_trackIds.index(i)+1,playlist2_trackIds.index(i)+1,i]
+                else:
+                    song_infos = apis.track.GetTrackDetail(i)
+                    artists = []
+                    for ar in song_infos['songs'][0]['ar']:
+                        artists.append(ar["name"])
+                    artists = "/".join(artists)
+                    title = song_infos['songs'][0]['name']
+                    pl_12[playlist_sim] = [playlist1_trackIds.index(i)+1,playlist2_trackIds.index(i)+1,i, artists +" - "+ title,song_infos['songs'][0]['al']["name"] ]
+                    print("similar_mode")
     pl_1not2 = {}
     playlist_diff = 0
     for i in playlist1_trackIds:   ## 歌单1有而歌单2没有
@@ -281,7 +300,7 @@ def playlist_infos_compare(playlist_id1,playlist_id2,simplified = False):
                 artists = "/".join(artists)
                 title = song_infos['songs'][0]['name']
                 pl_2not1[playlist2_trackIds.index(i)+1] = [playlist_diff,i, artists +" - "+ title,song_infos['songs'][0]['al']["name"] ]
-    return [pl_1not2,pl_2not1,playlist1_name,playlist2_name]
+    return [pl_1not2,pl_2not1,playlist1_name,playlist2_name,playlist1_len,playlist2_len,pl_12]
 
 if __name__ == '__main__':
     pass
