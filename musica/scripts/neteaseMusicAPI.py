@@ -9,91 +9,94 @@ import re
 def song_infos(song_id):
     sg_infos = {}
     song_infos = apis.track.GetTrackDetail(song_id)
-    # print(song_infos)
-    artists = {"name":[],"aname":[],"url":[]}
-    for ar in song_infos['songs'][0]['ar']:
-        artists["name"].append(ar["name"])
-        an = ar.get("alias","")
-        if isinstance(an, list):
-            an = ",".join(an)
-        artists["aname"].append(an)  ## 艺术家别名
-        ## https://music.163.com/#/artist?id=17309 艺术家URL
-        artists["url"].append("https://music.163.com/artist?id=" + str(ar.get("id","")))
-    artists2 = list(zip(*[artists[key] for key in artists]))
-    artists = []
-    artists_id = []
-    for ar in song_infos['songs'][0]['ar']:
-        artists.append(ar["name"])
-        if ar["id"]:
-            artists_id.append(ar["id"])
-    artists = "/".join(artists)
-    title = song_infos['songs'][0]['name']
-    sg_infos["artists"] = artists
-    sg_infos["artists2"] = artists2
-    sg_infos["title"] = song_infos['songs'][0]['name']
-    if 'tns' in song_infos['songs'][0]:   ## 歌曲标题翻译
-        sg_infos["title_tns"] = song_infos['songs'][0]['tns'][0]
-    if song_infos['songs'][0]['alia']:  ## 歌曲标题注释
-        sg_infos["title_alia"] = song_infos['songs'][0]['alia'][0]
-    
-    sg_infos["song_id"] = song_id
-    sg_infos["song_title"] = artists +" - "+ title ## 歌曲完整标题
-    sg_infos["song_title_"] = re.sub(r"[\(\[（].*?[\)\]）]", "", sg_infos["song_title"]) ## 歌曲完整标题去冗余
-    sg_infos["song_album_id"] =  str(song_infos['songs'][0]['al']["id"])  # 专辑ID
-
-    if song_infos['songs'][0]['noCopyrightRcmd'] != None:   ## 版权注释
-        sg_infos["song_copyright"] = False
-        sg_infos["song_noCopyrightRcmd"] =  song_infos['songs'][0]['noCopyrightRcmd']
-    elif song_infos['privileges'][0]['st'] == -200:
-        sg_infos["song_copyright"] = False
-    else:
-        sg_infos["song_copyright"] = True
-    
-    sg_infos["song_fee"] =  song_infos['privileges'][0]['fee'] ## 是否付费
-    sg_infos["song_pop"] =  song_infos['songs'][0]['pop'] ## 歌曲热度
-
-
-    album_infos = apis.album.GetAlbumInfo(sg_infos["song_album_id"])
-    sg_infos["song_album"] =  song_infos['songs'][0]['al']["name"]  ## 专辑名称
-    sg_infos["song_album_tns"] =  song_infos['songs'][0]['al']["tns"]  ## 专辑名称翻译
-
-    sg_infos["song_album_url"] =  "http://music.163.com/album?id=" + sg_infos["song_album_id"] ## 专辑URL
-    sg_infos["song_album_pic"] = song_infos['songs'][0]['al']["picUrl"]  ## 专辑图片链接
-    sg_infos["song_url"] = "http://music.163.com/song?id=" + str(song_id)  ## 歌曲URL
-    sg_infos["song_mp3"] = "http://music.163.com/song/media/outer/url?id=" + str(song_id) + ".mp3"  ## 歌曲MP3
-    ## 专辑发行时间
-    sg_infos["song_album_publishTime"] = time.strftime("%Y-%m-%d",time.localtime(album_infos['album']['publishTime']/1000))
-    sg_infos["song_lyric_url"] = ""
-    song_lyric = apis.track.GetTrackLyrics(song_id, lv=-1, tv=-1, rv=-1)
-    if song_lyric.get('nolyric'):
-        sg_infos["song_lyric"]  = "纯音乐,请欣赏"
-    elif song_lyric['lrc']:
-        sg_infos["song_lyric_url"] = "https://music.163.com/api/song/lyric?id=" + str(song_id)  + "&lv=1&kv=1&tv=-1"
-        sg_infos["song_lyric"]  = song_lyric['lrc']['lyric']
-        lys = utils.lrcparser.LrcParser(sg_infos["song_lyric"])
+    if song_infos['songs']:   ## 有效的UD
+        print(song_infos['songs'])
+        artists = {"name":[],"aname":[],"url":[]}
+        for ar in song_infos['songs'][0]['ar']:
+            artists["name"].append(ar["name"])
+            an = ar.get("alias","")
+            if isinstance(an, list):
+                an = ",".join(an)
+            artists["aname"].append(an)  ## 艺术家别名
+            ## https://music.163.com/#/artist?id=17309 艺术家URL
+            artists["url"].append("https://music.163.com/artist?id=" + str(ar.get("id","")))
+        artists2 = list(zip(*[artists[key] for key in artists]))
+        artists = []
+        artists_id = []
+        for ar in song_infos['songs'][0]['ar']:
+            artists.append(ar["name"])
+            if ar["id"]:
+                artists_id.append(ar["id"])
+        artists = "/".join(artists)
+        title = song_infos['songs'][0]['name']
+        sg_infos["artists"] = artists
+        sg_infos["artists2"] = artists2
+        sg_infos["title"] = song_infos['songs'][0]['name']
+        if 'tns' in song_infos['songs'][0]:   ## 歌曲标题翻译
+            sg_infos["title_tns"] = song_infos['songs'][0]['tns'][0]
+        if song_infos['songs'][0]['alia']:  ## 歌曲标题注释
+            sg_infos["title_alia"] = song_infos['songs'][0]['alia'][0]
         
-        lys = dict(lys.lyrics_sorted)
-        if not lys:
-            sg_infos["song_lyric_dict"]  = song_lyric['lrc']['lyric'] ## 该歌词不支持自动滚动
-            sg_infos["song_lyric_noscroll"]  = True
-            print(sg_infos)
-        else:
-            ## 歌词格式 {0.0: [('00:00.000', ' 作词 : 月吟诗')],1.0: [('00:01.000', ' 作曲 : 月吟诗')],..}
-            if 'tlyric' in song_lyric:
-                sg_infos["song_tlyric"]  = song_lyric['tlyric']['lyric']
-                lyst = utils.lrcparser.LrcParser(sg_infos["song_tlyric"])
-                lyst = dict(lyst.lyrics_sorted)
-                ## defaultdict(<class 'list'>, {9.71: [('00:09.71', '在城市里徘徊,目光注视着地面')], 
-                # lys = {**lys.lyrics_sorted, **lyst.lyrics_sorted} ## combine dict but will overwrite
-                for k in lys.keys():
-                    if lyst.get(k):
-                        lys[k] = [(lys[k][0][0],lys[k][0][1]  + "\n" + lyst[k][0][1])]
-            sg_infos["song_lyric_dict"]  = lys
+        sg_infos["song_id"] = song_id
+        sg_infos["song_title"] = artists +" - "+ title ## 歌曲完整标题
+        sg_infos["song_title_"] = re.sub(r"[\(\[（].*?[\)\]）]", "", sg_infos["song_title"]) ## 歌曲完整标题去冗余
+        sg_infos["song_album_id"] =  str(song_infos['songs'][0]['al']["id"])  # 专辑ID
 
-        # for item in lyricss:
-        #     print(lyricss[item]
+        if song_infos['songs'][0]['noCopyrightRcmd'] != None:   ## 版权注释
+            sg_infos["song_copyright"] = False
+            sg_infos["song_noCopyrightRcmd"] =  song_infos['songs'][0]['noCopyrightRcmd']
+        elif song_infos['privileges'][0]['st'] == -200:
+            sg_infos["song_copyright"] = False
+        else:
+            sg_infos["song_copyright"] = True
+        
+        sg_infos["song_fee"] =  song_infos['privileges'][0]['fee'] ## 是否付费
+        sg_infos["song_pop"] =  song_infos['songs'][0]['pop'] ## 歌曲热度
+
+
+        album_infos = apis.album.GetAlbumInfo(sg_infos["song_album_id"])
+        sg_infos["song_album"] =  song_infos['songs'][0]['al']["name"]  ## 专辑名称
+        sg_infos["song_album_tns"] =  song_infos['songs'][0]['al']["tns"]  ## 专辑名称翻译
+
+        sg_infos["song_album_url"] =  "http://music.163.com/album?id=" + sg_infos["song_album_id"] ## 专辑URL
+        sg_infos["song_album_pic"] = song_infos['songs'][0]['al']["picUrl"]  ## 专辑图片链接
+        sg_infos["song_url"] = "http://music.163.com/song?id=" + str(song_id)  ## 歌曲URL
+        sg_infos["song_mp3"] = "http://music.163.com/song/media/outer/url?id=" + str(song_id) + ".mp3"  ## 歌曲MP3
+        ## 专辑发行时间
+        sg_infos["song_album_publishTime"] = time.strftime("%Y-%m-%d",time.localtime(album_infos['album']['publishTime']/1000))
+        sg_infos["song_lyric_url"] = ""
+        song_lyric = apis.track.GetTrackLyrics(song_id, lv=-1, tv=-1, rv=-1)
+        if song_lyric.get('nolyric'):
+            sg_infos["song_lyric"]  = "纯音乐,请欣赏"
+        elif song_lyric['lrc']:
+            sg_infos["song_lyric_url"] = "https://music.163.com/api/song/lyric?id=" + str(song_id)  + "&lv=1&kv=1&tv=-1"
+            sg_infos["song_lyric"]  = song_lyric['lrc']['lyric']
+            lys = utils.lrcparser.LrcParser(sg_infos["song_lyric"])
+            
+            lys = dict(lys.lyrics_sorted)
+            if not lys:
+                sg_infos["song_lyric_dict"]  = song_lyric['lrc']['lyric'] ## 该歌词不支持自动滚动
+                sg_infos["song_lyric_noscroll"]  = True
+                print(sg_infos)
+            else:
+                ## 歌词格式 {0.0: [('00:00.000', ' 作词 : 月吟诗')],1.0: [('00:01.000', ' 作曲 : 月吟诗')],..}
+                if 'tlyric' in song_lyric:
+                    sg_infos["song_tlyric"]  = song_lyric['tlyric']['lyric']
+                    lyst = utils.lrcparser.LrcParser(sg_infos["song_tlyric"])
+                    lyst = dict(lyst.lyrics_sorted)
+                    ## defaultdict(<class 'list'>, {9.71: [('00:09.71', '在城市里徘徊,目光注视着地面')], 
+                    # lys = {**lys.lyrics_sorted, **lyst.lyrics_sorted} ## combine dict but will overwrite
+                    for k in lys.keys():
+                        if lyst.get(k):
+                            lys[k] = [(lys[k][0][0],lys[k][0][1]  + "\n" + lyst[k][0][1])]
+                sg_infos["song_lyric_dict"]  = lys
+
+            # for item in lyricss:
+            #     print(lyricss[item]
+        else:
+            sg_infos["song_lyric"] = ""
     else:
-        sg_infos["song_lyric"] = ""
+        sg_infos = ""
     return(sg_infos)
 
 def playlist_infos(playlist_id):
@@ -181,12 +184,16 @@ def playlist_infos(playlist_id):
                     pl_infos["tracks"][i]["idx"] = i + 1
         return(pl_infos)
     except:
+        pl_infos = {}
         return(pl_infos)
 
 def album_infos(album_id):
     album_infos = apis.album.GetAlbumInfo(album_id)
-    print(album_infos)
+    print("album:",album_infos)
     al_infos = {}
+    if album_infos['code'] == 404:
+        print(album_infos['code'])
+        return(al_infos)
     try:
         al_infos["album"]={}
         al_infos["album"]["album_url"] = "http://music.163.com/album?id=" + str(album_infos['songs'][0]["al"]["id"]) ## 专辑URL
@@ -237,9 +244,10 @@ def album_infos(album_id):
             al_infos["songs"][i]["idx"] = i + 1
         return(al_infos)
     except:
+        al_infos = {}
         return(al_infos)
 
-def playlist_infos_compare(playlist_id1,playlist_id2,simplified = False,similar_mode=False):
+def playlist_infos_compare(playlist_id1,playlist_id2,simplified = False,similar_mode=False,mode_left=False):
     playlist1 = apis.playlist.GetPlaylistInfo(playlist_id1) 
     playlist2 = apis.playlist.GetPlaylistInfo(playlist_id2)
     playlist1_name = playlist1["playlist"]["name"] 
@@ -255,7 +263,7 @@ def playlist_infos_compare(playlist_id1,playlist_id2,simplified = False,similar_
     pl_12 = {}
     if similar_mode:
         playlist_sim = 0
-        for i in playlist1_trackIds:   ## 歌单1有而歌单2没有
+        for i in playlist1_trackIds:   ## 歌单1有,歌单2也有
             if i in playlist2_trackIds:
                 playlist_sim+=1
                 if simplified:
@@ -270,36 +278,39 @@ def playlist_infos_compare(playlist_id1,playlist_id2,simplified = False,similar_
                     pl_12[playlist_sim] = [playlist1_trackIds.index(i)+1,playlist2_trackIds.index(i)+1,i, artists +" - "+ title,song_infos['songs'][0]['al']["name"] ]
                     print("similar_mode")
     pl_1not2 = {}
-    playlist_diff = 0
-    for i in playlist1_trackIds:   ## 歌单1有而歌单2没有
-        if i not in playlist2_trackIds:
-            playlist_diff+=1
-            if simplified:
-                pl_1not2[playlist1_trackIds.index(i)+1]=[playlist_diff,i]
-            else:
-                song_infos = apis.track.GetTrackDetail(i)
-                artists = []
-                for ar in song_infos['songs'][0]['ar']:
-                    artists.append(ar["name"])
-                artists = "/".join(artists)
-                title = song_infos['songs'][0]['name']
-                pl_1not2[playlist1_trackIds.index(i)+1] = [playlist_diff,i, artists +" - "+ title,song_infos['songs'][0]['al']["name"] ]
-                
     pl_2not1 = {}
-    playlist_diff = 0
-    for i in playlist2_trackIds:   ## 歌单1有而歌单2没有
-        if i not in playlist1_trackIds:
-            playlist_diff+=1
-            if simplified:
-                pl_2not1[playlist2_trackIds.index(i)+1]=[playlist_diff,i]
-            else:
-                song_infos = apis.track.GetTrackDetail(i)
-                artists = []
-                for ar in song_infos['songs'][0]['ar']:
-                    artists.append(ar["name"])
-                artists = "/".join(artists)
-                title = song_infos['songs'][0]['name']
-                pl_2not1[playlist2_trackIds.index(i)+1] = [playlist_diff,i, artists +" - "+ title,song_infos['songs'][0]['al']["name"] ]
+    if not similar_mode:
+        playlist_diff = 0
+        for i in playlist1_trackIds:   ## 歌单1有而歌单2没有
+            if i not in playlist2_trackIds:
+                playlist_diff+=1
+                if simplified:
+                    pl_1not2[playlist1_trackIds.index(i)+1]=[playlist_diff,i]
+                else:
+                    song_infos = apis.track.GetTrackDetail(i)
+                    artists = []
+                    for ar in song_infos['songs'][0]['ar']:
+                        artists.append(ar["name"])
+                    artists = "/".join(artists)
+                    title = song_infos['songs'][0]['name']
+                    pl_1not2[playlist1_trackIds.index(i)+1] = [playlist_diff,i, artists +" - "+ title,song_infos['songs'][0]['al']["name"] ]
+                    
+       
+        playlist_diff = 0
+        if not mode_left:
+            for i in playlist2_trackIds:   ## 歌单1有而歌单2没有
+                if i not in playlist1_trackIds:
+                    playlist_diff+=1
+                    if simplified:
+                        pl_2not1[playlist2_trackIds.index(i)+1]=[playlist_diff,i]
+                    else:
+                        song_infos = apis.track.GetTrackDetail(i)
+                        artists = []
+                        for ar in song_infos['songs'][0]['ar']:
+                            artists.append(ar["name"])
+                        artists = "/".join(artists)
+                        title = song_infos['songs'][0]['name']
+                        pl_2not1[playlist2_trackIds.index(i)+1] = [playlist_diff,i, artists +" - "+ title,song_infos['songs'][0]['al']["name"] ]
     return [pl_1not2,pl_2not1,playlist1_name,playlist2_name,playlist1_len,playlist2_len,pl_12]
 
 if __name__ == '__main__':

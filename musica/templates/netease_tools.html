@@ -7,13 +7,18 @@
         <div class="control">
             <input class="input" type="text" placeholder="Netease URL" id="nurl">
         </div>
-        <p class="help">e.g. http://music.163.com/song?id=16323601 </p>
+        <p class="help">e.g. http://music.163.com/song?id=521416704 </p>
         <button class="button is-link mt-2" onclick="get_netease_id()">确认</button>
         <hr>
         <input id="netease_id" class="input" type="text" value=""  style="width: 100px;"  />
         <button class="btn button is-info" data-clipboard-action="copy" data-clipboard-target="#netease_id">
             复制歌单ID
         </button>
+        <a id="song_url" target="_blank">
+            <button class="btn button is-info">
+                歌曲信息
+            </button>
+        </a> 
     </div>
 </div>
 
@@ -24,8 +29,11 @@
     let re = /.*https?:\/\/(y\.)?music\.163\.com\/(#\/|m\/)?(song\?id=|song\/)(\d+)(&|\?|\/\?)?(userid=\d+)?.*/sm;
     
     let url = document.getElementById("nurl").value
+    let song_url = document.getElementById("song_url")
     let netease_id = url.replace(re, "$4");
+    song_url.setAttribute('href',"{% url 'netease_infos_song_name' %}"+ "?sid="+netease_id)
     document.getElementById("netease_id").value = netease_id;
+    
     if (url.replace(re, "$6")){
         // ?userid=XXXXX or &userid=XXXXX
         userid = url.replace(re, "$6")

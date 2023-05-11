@@ -21,6 +21,10 @@
               <input type="checkbox" name="similar_mode"> 
               相似模式
             </label>
+            <label class="checkbox">
+              <input type="checkbox" name="mode_left"> 
+              集合(A-B)
+            </label>
             <br>
             <button type="submit" class="button is-info mt-2">
               开始比对
@@ -60,7 +64,7 @@
         <td>{{ s.0 }}</td>
         <td>{{ s.1.0 }}</td>
         <td>{{ s.1.1 }}</td>
-        <td><a target="_blank" href="http://music.163.com/song?id= {{ s.1.1 }}">{{ s.1.2 }}</a></td>
+        <td><a target="_blank" href="http://music.163.com/song?id= {{ s.1.2 }}">{{ s.1.2 }}</a></td>
         {% if quick_mode != 0 %}
         <td>{{ s.1.3|truncatechars:50 }}</td>
         <td>{{ s.1.4 }}</td>

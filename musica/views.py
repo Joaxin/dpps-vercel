@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from datetime import datetime
 # Create your views here.
 import re
+import urllib.parse
 
 
 def netease_song(request):
@@ -20,13 +21,14 @@ def music_url_tools(request):
 
 def netease_infos_song(request):
     sid = request.GET['sid']
+    sid = urllib.parse.unquote(sid)
     print(sid)
     now = datetime.now()
-    pattern = re.compile('.*https?:\/\/(y\.)?music\.163\.com\/(#\/|m\/)?(song\?id=|song\/)(\d+)(&|\?|\/\?)?(userid=\d+)?.*', re.S)
-    if re.search("^(\d+)$", sid):
+    pattern = re.compile('.*(https\:\/\/link\.zhihu\.com\/\?target\=)?https?:\/\/(y\.)?music\.163\.com\/(#\/|m\/|#\/m\/)?(song\?id=|song\/)(\d+)(&|\?|\/\?)?(userid=\d+)?.*', re.S)
+    if re.search("^(\d+)$", sid):  ## 歌曲数字ID
         sid = re.search("^(\d+)$", sid).group(1)
     elif re.search(pattern, sid):
-        sid = re.search(pattern, sid).group(4)
+        sid = re.search(pattern, sid).group(5)
     ## https://music.163.com/#/song?id=192316 有#的会无法正常解析，会解析成https://music.163.com/
     ## 当url中出现"#"号时，"#"及其后面的字符串都会被忽略，不会被发送到服务器，因为浏览器将一个url视为一个html页面
     ## The "#" character marks inline anchors (links within the same page) in a URL, so the browser will never send it to Django.
@@ -40,7 +42,7 @@ def netease_infos_song(request):
 	    </html>
 	    '''
         return HttpResponse(html)
-
+    print(sid)
     netease_infos_song = song_infos(sid)
     if netease_infos_song:
         return render(request, 'netease_infos_song.html', {'song_infos': netease_infos_song})
@@ -51,6 +53,7 @@ def netease_infos_song(request):
 	        <body>
 	            <h1>无效的歌曲ID! 请访问<a href="http://music.163.com/song?id={sid}" target="_blank">http://music.163.com/song?id={sid}</a></h1>
 	            <p>The current time is { now }.</p>
+	            <a href="#" onClick="javascript :history.back(-1);">返回</a>
 	        </body>
 	    </html>
 	    '''
@@ -58,6 +61,7 @@ def netease_infos_song(request):
 
 def netease_infos_album(request):
     aid = request.GET['aid']
+    aid = urllib.parse.unquote(aid)
     print(aid)
     now = datetime.now()
     pattern = re.compile('.*https?:\/\/(y\.)?music\.163\.com\/(#\/|m\/)?(album\?id=|album\/)(\d+)(&|\?|\/\?)?(userid=\d+)?.*', re.S)
@@ -76,7 +80,7 @@ def netease_infos_album(request):
         return HttpResponse(html)
 
     netease_infos_album_ = album_infos(aid)
-    if netease_infos_album:
+    if netease_infos_album_:
         return render(request, 'netease_infos_album.html', {'album_infos': netease_infos_album_})
     else:
         now = datetime.now()
@@ -85,6 +89,7 @@ def netease_infos_album(request):
 	        <body>
 	            <h1>无效的专辑ID! 请访问<a href="http://music.163.com/album?id={aid}" target="_blank">http://music.163.com/album?id={aid}</a></h1>
 	            <p>The current time is { now }.</p>
+	            <a href="#" onClick="javascript :history.back(-1);">返回</a>
 	        </body>
 	    </html>
 	    '''
@@ -92,6 +97,7 @@ def netease_infos_album(request):
 
 def netease_infos_playlist(request):
     pid = request.GET['pid']
+    pid = urllib.parse.unquote(pid)
     print(pid)
     now = datetime.now()
     pattern = re.compile('.*https?:\/\/(y\.)?music\.163\.com\/(#\/|m\/)?(playlist\?id=|playlist\/)(\d+)(&|\?|\/\?)?(userid=\d+)?.*', re.S)
@@ -119,6 +125,7 @@ def netease_infos_playlist(request):
             <body>
                 <h1>无效的歌单ID! 请访问<a href="http://music.163.com/playlist?id={pid}" target="_blank">http://music.163.com/playlist?id={pid}</a></h1>
                 <p>The current time is { now }.</p>
+                <a href="#" onClick="javascript :history.back(-1);">返回</a>
             </body>
         </html>
         '''
@@ -128,9 +135,12 @@ def netease_playlist_compare(request):
     # print(request.GET)
     if request.GET:
         pid1 = request.GET['pid1']
+        pid1 = urllib.parse.unquote(pid1)
         pid2 = request.GET['pid2']
+        pid2 = urllib.parse.unquote(pid2)
         quick_mode = request.GET.get('quick_mode',None)
         similar_mode = request.GET.get('similar_mode',None)
+        mode_left = request.GET.get('mode_left',None)
 
         pattern = re.compile('.*https?:\/\/(y\.)?music\.163\.com\/(#\/|m\/)?(playlist\?id=|playlist\/)(\d+)(&|\?|\/\?)?(userid=\d+)?.*', re.S)
         if re.search("^(\d+)$", pid1):
@@ -166,12 +176,16 @@ def netease_playlist_compare(request):
         else:
             similar_mode = False
         
-        print(similar_mode)
+        if mode_left == "on":
+            mode_left = True
+        else:
+            mode_left = False
+        
         if quick_mode == "on":
-            netease_infos_playlist_compare = playlist_infos_compare(pid1,pid2,simplified = True,similar_mode = similar_mode)
+            netease_infos_playlist_compare = playlist_infos_compare(pid1,pid2,simplified = True,similar_mode = similar_mode,mode_left=mode_left)
             quick_mode = 0
         else:
-            netease_infos_playlist_compare = playlist_infos_compare(pid1,pid2,simplified = False,similar_mode = similar_mode)
+            netease_infos_playlist_compare = playlist_infos_compare(pid1,pid2,simplified = False,similar_mode = similar_mode,mode_left=mode_left)
             quick_mode = 1
         
         if netease_infos_playlist_compare:
@@ -187,6 +201,7 @@ def netease_playlist_compare(request):
                 <body>
                     <h1>无效的歌单ID! 请访问<a href="http://music.163.com/playlist?id={pid1}" target="_blank">http://music.163.com/playlist?id={pid1}</a></h1>或者
                     <h1>无效的歌单ID! 请访问<a href="http://music.163.com/playlist?id={pid2}" target="_blank">http://music.163.com/playlist?id={pid2}</a></h1>检查
+                    <a href="#" onClick="javascript :history.back(-1);">返回</a>
                 </body>
             </html>
             '''

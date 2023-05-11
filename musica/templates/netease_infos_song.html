@@ -113,26 +113,37 @@
                                         复制歌曲标题
                                     </button>
                                     <button class="btn button is-info mt-5"
-                                        data-clipboard-text="{{song_infos.song_title}}&#xa;{{song_infos.song_url}}{% if not song_infos.song_copyright %}【无版权】{% endif %}{% if song_infos.song_fee == 1 %}【VIP】{% endif %}&#xa;{M{{song_infos.song_id}}}">
-                                        复制歌曲信息(Melting)
+                                        data-clipboard-text="{{song_infos.song_title}}&#xa;{{song_infos.song_url}}{% if not song_infos.song_copyright %}   【无版权】{% endif %}{% if song_infos.song_fee == 1 %}   【VIP】{% endif %}&#xa;{M{{song_infos.song_id}}}">
+                                        复制链接(Melting)
                                     </button>
                                     <button class="btn button is-info mt-5"
-                                        data-clipboard-text="[{{song_infos.song_title}}]({{song_infos.song_url}}){% if not song_infos.song_copyright %}【无版权】{% endif %}{% if song_infos.song_fee == 1 %}【VIP】{% endif %}&#xa;{N{{song_infos.song_id}}}">
-                                        复制歌曲信息(Netease)
+                                        data-clipboard-text="[{{song_infos.song_title}}]({{song_infos.song_url}}){% if not song_infos.song_copyright %}   【无版权】{% endif %}{% if song_infos.song_fee == 1 %}   【VIP】{% endif %}&#xa;{N{{song_infos.song_id}}}">
+                                        复制链接(Netease)
                                     </button>
+                                    <button class="btn button is-info mt-5"
+                                    data-clipboard-text="{{song_infos.song_title}}&#xa;&#xa;发行时间:{{song_infos.song_album_publishTime}}   所属专辑：{{song_infos.song_album}}&#xa;🎵 {{song_infos.song_url}}{% if not song_infos.song_copyright %}   【无版权】{% endif %}{% if song_infos.song_fee == 1 %}   【VIP】{% endif %}&#xa;{M{{song_infos.song_id}}}">
+                                    复制完整歌曲信息(Melting)
+                                </button>
+                               
+                                    <a href="{% url 'netease_song' %}">
+                                        <button class="btn button is-info mt-5">+</button>
+                                      </a> 
+                            
                                     <br>
                                     <a href="https://www.baidu.com/s?ie=UTF-8&wd={{song_infos.song_title_}}"
                                         class="button mt-5" target="_blank">百度一下</a>
 
                                     <a href="https://www.google.com.hk/search?q={{song_infos.song_title_}}"
                                         class="button mt-5" target="_blank">Google一下</a>
+                                        <a href="https://y.qq.com/n/ryqq/search?w={{song_infos.song_title}}"
+                                        class="button mt-5 is-white" target="_blank">QQ音乐搜索</a>
                                     <a href="https://www.youtube.com/results?search_query={{song_infos.song_title_}}"
                                         class="button mt-5 is-white" target="_blank">Youtube搜索</a>
                                     <a href="//search.bilibili.com/all?keyword={{song_infos.song_title_}}"
                                         class="button mt-5 is-white" target="_blank">Bilibili搜索</a>
                                     <a href="https://search.douban.com/music/subject_search?search_text={{song_infos.artists}}-{{song_infos.song_album}}"
                                         class="button mt-5 is-white" target="_blank">豆瓣搜索</a>
-                                        <a href="https://translate.google.cn/?hl=en&sl=auto&tl=en&text={{song_infos.song_album}}%20{{song_infos.title}}"
+                                        <a href="https://translate.google.com/?hl=en&sl=auto&tl=en&text={{song_infos.song_album}}%20{{song_infos.title}}"
                                         class="button mt-5 is-white" target="_blank">Google翻译</a>    
                                     <a target="_blank" href="/al/netease/?aid={{song_infos.song_album_id}}" title="{{song_infos.song_album}}" class="button mt-5 is-white">本站专辑链接</a>
                                 </div>
