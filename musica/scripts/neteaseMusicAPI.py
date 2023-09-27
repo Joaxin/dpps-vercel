@@ -39,7 +39,8 @@ def song_infos(song_id):
         
         sg_infos["song_id"] = song_id
         sg_infos["song_title"] = artists +" - "+ title ## 歌曲完整标题
-        sg_infos["song_title_"] = re.sub(r"[\(\[（].*?[\)\]）]", "", sg_infos["song_title"]) ## 歌曲完整标题去冗余
+        # sg_infos["song_title_"] = re.sub(r"[\(\[（].*?[\)\]）]", "", sg_infos["song_title"]) ## 歌曲完整标题去冗余
+        sg_infos["song_title_"] = re.sub(r"[\(\[.*?\]\)]", "", sg_infos["song_title"]) ## 歌曲完整标题去冗余
         sg_infos["song_album_id"] =  str(song_infos['songs'][0]['al']["id"])  # 专辑ID
 
         if song_infos['songs'][0]['noCopyrightRcmd'] != None:   ## 版权注释

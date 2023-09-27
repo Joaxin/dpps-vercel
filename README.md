@@ -124,7 +124,9 @@ Check your results in the [Vercel dashboard](https://vercel.com/dashboard).
 Refused to apply style from 'XXX' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.
 ```
 
+## ⚠️ Disclaimer
 
+Please note that this project is only for learning and research purposes, and the author is not responsible for any legal consequences caused by the use of this project.
 
 ## REFs
 

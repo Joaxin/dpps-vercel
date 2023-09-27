@@ -1,5 +1,6 @@
 {% extends 'musica_base.html' %}
 {% load static %}
+{% load music_convert %}
 {% block title %}{{song_infos.title}}{% endblock %}
 {% block css %}
 <link href="{% static 'musica/music_infos.css' %}" rel="stylesheet" type="text/css" />
@@ -93,9 +94,11 @@
                                             {% endif %}
                                             <p>
                                                  {% if not song_infos.song_copyright %}
-                                                        无版权 <a href="https://y.qq.com/n/ryqq/search?w={{song_infos.song_title}}" target="_blank">尝试QQ音乐搜索</a>
+                                                        无版权 <a href="https://y.qq.com/n/ryqq/search?w={{song_infos.song_title|url_convert}}" target="_blank">尝试QQ音乐搜索</a>
+                                                        <a href="https://www.kugou.com/yy/html/search.html#searchType=song&searchKeyWord={{song_infos.song_title|url_convert}}" target="_blank">尝试酷狗音乐搜索</a>
+                                                        <a href="http://www.kuwo.cn/search/list?key={{song_infos.song_title|url_convert}}" target="_blank">尝试酷我搜索</a>
                                                         {% if song_infos.song_noCopyrightRcmd != None %}
-                                                        ,但有其它版本可播 <a href="https://music.163.com/#/search/m/?s={{song_infos.song_title}}" target="_blank">尝试网易云搜索</a>&nbsp;&nbsp;
+                                                        ,但可能有其它版本可播 <a href="https://music.163.com/#/search/m/?s={{song_infos.song_title|url_convert}}" target="_blank">尝试网易云搜索</a>&nbsp;&nbsp;
                                                         {% endif %}
                                                  {% endif %}
                                                  {% if song_infos.song_fee == 1 %}
@@ -141,7 +144,7 @@
                                         class="button mt-5 is-white" target="_blank">Youtube搜索</a>
                                     <a href="//search.bilibili.com/all?keyword={{song_infos.song_title_}}"
                                         class="button mt-5 is-white" target="_blank">Bilibili搜索</a>
-                                    <a href="https://search.douban.com/music/subject_search?search_text={{song_infos.artists}}-{{song_infos.song_album}}"
+                                    <a href="https://search.douban.com/music/subject_search?search_text={{song_infos.artists|url_convert}}-{{song_infos.song_album|url_convert}}"
                                         class="button mt-5 is-white" target="_blank">豆瓣搜索</a>
                                         <a href="https://translate.google.com/?hl=en&sl=auto&tl=en&text={{song_infos.song_album}}%20{{song_infos.title}}"
                                         class="button mt-5 is-white" target="_blank">Google翻译</a>    
