@@ -72,7 +72,8 @@ def song_infos(song_id):
         elif song_lyric['lrc']:
             sg_infos["song_lyric_url"] = "https://music.163.com/api/song/lyric?id=" + str(song_id)  + "&lv=1&kv=1&tv=-1"
             sg_infos["song_lyric"]  = song_lyric['lrc']['lyric']
-            lys = utils.lrcparser.LrcParser(sg_infos["song_lyric"])
+            print(sg_infos["song_lyric"])
+            lys = utils.lrcparser.LrcParser(sg_infos["song_lyric"]) ## from .lrcparser import LrcParser
             
             lys = dict(lys.lyrics_sorted)
             if not lys:

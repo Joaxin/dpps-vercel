@@ -1,4 +1,4 @@
-Django>=3.2
-pyncm==1.6.2.7
-# mutagen>=1.45
-https://sourceforge.net/projects/cinemagoer/
+Django==4.2.5
+pyncm>=1.6.11
+# mutagen>=1.47
+## https://sourceforge.net/projects/cinemagoer/
