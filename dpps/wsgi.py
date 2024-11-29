@@ -15,4 +15,4 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dpps.settings')
 
 application = get_wsgi_application()
 
-pp = get_wsgi_application()
+app = get_wsgi_application()
