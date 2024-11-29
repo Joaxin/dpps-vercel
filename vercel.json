@@ -1,28 +1,24 @@
 {
-  "functions": [
-    "api/*.py": {
-      "runtime": "python3.9"
-  },
-        {
-            "src": "static/**",
-            "use": "@vercel/static"
-        },
-        {
-            "src": "dpps/wsgi.py",
-            "use": "@ardnt/vercel-python-wsgi",
-            "config": {
-                "maxLambdaSize": "30mb"
-            }
+    "version": 2,
+    "builds": [
+      {
+        "src": "dpps/wsgi.py",
+        "use": "@vercel/python",
+        "config": { "maxLambdaSize": "30mb", "runtime": "python3.9" }
+      },
+      {
+           "src": "static/**",
+           "use": "@vercel/static"
         }
     ],
     "routes": [
-        {
-            "src": "/static/(.*)",
-            "dest": "/static/$1"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "dpps/wsgi.py"
-        }
+      {
+        "src": "/static/(.*)",
+        "dest": "/static/$1"
+      },
+      {
+        "src": "/(.*)",
+        "dest": "dpps/wsgi.py"
+      }
     ]
-}
+  }
