@@ -6,6 +6,8 @@ import re
 ## https://github.com/greats3an/pyncm
 ## API https://github.com/greats3an/pyncm/wiki
 
+from pyncm.utils.lrcparser import LrcParser
+
 def song_infos(song_id):
     sg_infos = {}
     song_infos = apis.track.GetTrackDetail(song_id)
@@ -73,7 +75,7 @@ def song_infos(song_id):
             sg_infos["song_lyric_url"] = "https://music.163.com/api/song/lyric?id=" + str(song_id)  + "&lv=1&kv=1&tv=-1"
             sg_infos["song_lyric"]  = song_lyric['lrc']['lyric']
             print(sg_infos["song_lyric"])
-            lys = utils.lrcparser.LrcParser(sg_infos["song_lyric"]) ## from .lrcparser import LrcParser
+            lys = LrcParser(sg_infos["song_lyric"]) ## from .lrcparser import LrcParser https://github.com/mos9527/pyncm/issues/48
             
             lys = dict(lys.lyrics_sorted)
             if not lys:
@@ -84,7 +86,7 @@ def song_infos(song_id):
                 ## 歌词格式 {0.0: [('00:00.000', ' 作词 : 月吟诗')],1.0: [('00:01.000', ' 作曲 : 月吟诗')],..}
                 if 'tlyric' in song_lyric:
                     sg_infos["song_tlyric"]  = song_lyric['tlyric']['lyric']
-                    lyst = utils.lrcparser.LrcParser(sg_infos["song_tlyric"])
+                    lyst = LrcParser(sg_infos["song_tlyric"])
                     lyst = dict(lyst.lyrics_sorted)
                     ## defaultdict(<class 'list'>, {9.71: [('00:09.71', '在城市里徘徊,目光注视着地面')], 
                     # lys = {**lys.lyrics_sorted, **lyst.lyrics_sorted} ## combine dict but will overwrite

@@ -355,8 +355,8 @@ apis.track.GetTrackLyrics(38574759, lv=-1, tv=-1, rv=-1)['nolyric']
 
 ```python
 ly = apis.track.GetTrackLyrics(425065746, lv=-1, tv=-1, rv=-1)['lrc']['lyric']
-from pyncm import utils
-lys = utils.lrcparser.LrcParser(ly)
+from pyncm.utils.lrcparser import LrcParser
+lys = LrcParser(ly)
 lyricss = dict(lys.lyrics_sorted)
 for item in lyricss:
     print(lyricss[item][0][1])

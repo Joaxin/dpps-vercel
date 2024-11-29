@@ -1,4 +1,4 @@
 Django==4.2.5
-pyncm>=1.6.11
+pyncm>=1.7.1
 # mutagen>=1.47
 ## https://sourceforge.net/projects/cinemagoer/
