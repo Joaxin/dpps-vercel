@@ -1,5 +1,12 @@
 {
     "builds": [
+{
+  "functions": {
+    "api/*.py": {
+      "runtime": "python3.9"
+    }
+  }
+},
         {
             "src": "static/**",
             "use": "@vercel/static"
